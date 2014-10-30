@@ -3,5 +3,7 @@
 
     <string name="app_name">Schiffeversenken</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_spiel_starten">SpielStarten</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
