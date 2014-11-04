@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="16"
         android:targetSdkVersion="21" />
 
     <application
@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".Startseite"
+            android:name=".view.Startseite"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,8 +23,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SpielStarten"
+            android:name=".view.SpielStarten"
             android:label="@string/title_activity_spiel_starten" >
+        </activity>
+        <activity
+            android:name=".view.Einstellungen"
+            android:label="@string/title_activity_einstellungen" >
+        </activity>
+        <activity
+            android:name=".view.Schwierigkeitsstufe"
+            android:label="@string/title_activity_schwierigkeitsstufe" >
+        </activity>
+        <activity
+            android:name=".Hilfe"
+            android:label="@string/title_activity_hilfe" >
+        </activity>
+        <activity
+            android:name=".Spielermodus"
+            android:label="@string/title_activity_spielermodus" >
         </activity>
     </application>
 

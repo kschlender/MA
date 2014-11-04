@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.ma.schiffeversenken.SpielStarten" >
+    tools:context="com.ma.schiffeversenken.view.SpielStarten" >
 
     <TextView
         android:layout_width="wrap_content"
