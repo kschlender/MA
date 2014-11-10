@@ -48,8 +48,8 @@ public class Einstellungen extends Activity {
 		
 		lautlosCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			/*
-			 * Wenn die Lautlos Checkbox bet‰tigt wird,
-			 * wird der entsprechende Eintrag in den Shared Preferences ge‰ndert
+			 * Wenn die Lautlos Checkbox bet√∂tigt wird,
+			 * wird der entsprechende Eintrag in den Shared Preferences ge√§ndert
 			 */
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -64,8 +64,8 @@ public class Einstellungen extends Activity {
 		
 		vibrationausCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			/*
-			 * Wenn die Vibration aus Checkbox bet‰tigt wird,
-			 * wird der entsprechende Eintrag in den Shared Preferences ge‰ndert
+			 * Wenn die Vibration aus Checkbox bet√∂tigt wird,
+			 * wird der entsprechende Eintrag in den Shared Preferences ge√§ndert
 			 */
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -99,7 +99,7 @@ public class Einstellungen extends Activity {
 	}
 	
 	public String getValue(String name){
-		//Gibt den Wert des entsprechendes Eintrags zur¸ck
+		//Gibt den Wert des entsprechendes Eintrags zur√ºck
 		SharedPreferences sp = getSharedPreferences("Main_Preferences", MODE_MULTI_PROCESS);
 		return sp.getString(name, "");
 	}

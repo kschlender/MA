@@ -35,4 +35,13 @@
         android:layout_marginTop="34dp"
         android:text="Hilfe" />
 
+    <Button
+        android:id="@+id/Test_Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Hilfe_Button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="Test" />
+
 </RelativeLayout>
