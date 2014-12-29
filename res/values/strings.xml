@@ -16,5 +16,28 @@
     <string name="title_activity_hilfe">Hilfe</string>
     <string name="title_activity_spielermodus">Spielermodus</string>
     <string name="title_activity_test_ausgabe">TestAusgabe</string>
+    <string name="title_activity_multiplayer">Multiplayer</string>
+    <string name="title_activity_create_multiplayer_game">CreateMultiplayerGame</string>
+    <string name="title_activity_visit_multiplayer_game">VisitMultiplayerGame</string>
+    <string name="title_activity_schlachtfeld">schlachtfeld</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="hello">Hello, OpenGL ES 2.0!</string>
+    <string name="title_activity_spiel_einstellungen">SpielEinstellungen</string>
+    <string name="single_player_game">Einzelspieler</string>
+    <string name="multi_player_game">Mehrspieler</string>
+    <string name="zerstoerer_row_title">Zerstörer(0 bis 2)</string>
+    <string name="schlachtschiff_row_title">Schlachtschiff(0 bis 1)</string>
+    <string name="uboot_row_title">Uboot(0 bis 3)</string>
+    <string name="kreuzer_boat_row_title">Kreuzer(0 bis 4)</string>
+    <string name="grid_topic_row_title">Wähle eine Spielstrategie</string>
+    <string name="grid_topic_row_title2">Drücken Sie Start\num zu Beginnen</string>
+    <string name="schwierigkeitsstufe">KI-Stärke(1 bis 3)</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="zurueck">Zurück</string>
+    <string name="start">Start</string>
+    <string name="title_activity_ship_configuration">ShipConfigurationActivity</string>
+    <string name="connection_error">Keine Verbindung möglich</string>
 
 </resources>

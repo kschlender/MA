@@ -2,27 +2,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+	android:background="@drawable/schiffeversenken"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.ma.schiffeversenken.Spielermodus" >
+    tools:context="com.ma.schiffeversenken.android.view.Spielermodus">
 
-    <Button
-        android:id="@+id/Einzelspieler_Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="190dp"
-        android:text="Einzelspieler" />
+	    <Button
+	        android:id="@+id/Mehrspieler_Button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignLeft="@+id/Einzelspieler_Button"
+	        android:layout_alignRight="@+id/Einzelspieler_Button"
+	        android:layout_below="@+id/Einzelspieler_Button"
+	        android:clickable="true"
+	        android:text="@string/multi_player_game" />
 
-    <Button
-        android:id="@+id/Mehrspieler_Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/Einzelspieler_Button"
-        android:layout_below="@+id/Einzelspieler_Button"
-        android:layout_marginTop="59dp"
-        android:text="Mehrspieler" />
-
+	    <Button
+	        android:id="@+id/Einzelspieler_Button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentTop="true"
+	        android:layout_centerHorizontal="true"
+	        android:layout_marginTop="179dp"
+	        android:clickable="true"
+	        android:text="@string/single_player_game" />
+	
 </RelativeLayout>

@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ma.schiffeversenken"
+    package="com.ma.schiffeversenken.android"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="16"
+        android:minSdkVersion="17"
         android:targetSdkVersion="21" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                     android:maxSdkVersion="18" />
+    
+    <android:uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="21" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="21" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/schiffeversenken_logo"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/GdxTheme" >
         <activity
             android:name=".view.Startseite"
-            android:label="@string/app_name" >
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,27 +41,80 @@
         </activity>
         <activity
             android:name=".view.SpielStarten"
-            android:label="@string/title_activity_spiel_starten" >
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_spiel_starten"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".view.Einstellungen"
-            android:label="@string/title_activity_einstellungen" >
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_einstellungen"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".view.Schwierigkeitsstufe"
-            android:label="@string/title_activity_schwierigkeitsstufe" >
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_schwierigkeitsstufe"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".view.Hilfe"
-            android:label="@string/title_activity_hilfe" >
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_hilfe"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".view.Spielermodus"
-            android:label="@string/title_activity_spielermodus" >
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_spielermodus"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".controller.TestAusgabe"
-            android:label="@string/title_activity_test_ausgabe" >
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_test_ausgabe"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".view.Multiplayer"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_multiplayer"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".view.CreateMultiplayerGame"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:label="@string/title_activity_create_multiplayer_game"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".view.VisitMultiplayerGame"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:label="@string/title_activity_visit_multiplayer_game"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".AndroidLauncher"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" >
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity
+            android:name=".view.GamePreferencesActivity"
+            android:label="@string/title_activity_spiel_einstellungen" >
+        </activity>
+        <activity
+            android:name="com.ma.schiffeversenken.android.view.ShipConfigurationActivity"
+            android:label="@string/title_activity_ship_configuration" >
         </activity>
     </application>
 

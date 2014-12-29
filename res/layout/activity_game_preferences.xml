@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/game_preferences_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/schiffeversenken" >
+
+    <TextView
+        android:id="@+id/grid_topic_row_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:text="@string/grid_topic_row_title"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <RelativeLayout
+        android:id="@+id/grid_size_row_zerstoerer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/grid_topic_row_title" >
+
+        <TextView
+            android:id="@+id/zerstoerer_size"
+            android:layout_width="48dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp" />
+
+        <Button
+            android:id="@+id/zerstoerer_plus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:minWidth="@dimen/plus_minus_dim"
+            android:text="@string/plus" />
+
+        <Button
+            android:id="@+id/zerstoerer_minus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_toStartOf="@+id/zerstoerer_plus"
+            android:minWidth="@dimen/plus_minus_dim"
+            android:text="@string/minus" />
+
+        <TextView
+            android:id="@+id/zerstoerer_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="2dp"
+            android:layout_toEndOf="@+id/zerstoerer_size"
+            android:text="@string/zerstoerer_row_title" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/grid_size_row_zerstoerer" >
+
+        <TextView
+            android:id="@+id/schlachtschiff_size"
+            android:layout_width="48dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp" />
+
+        <Button
+            android:id="@+id/schlachtschiff_plus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:minWidth="@dimen/plus_minus_dim"
+            android:text="@string/plus" />
+
+        <Button
+            android:id="@+id/schlachtschiff_minus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_toStartOf="@+id/schlachtschiff_plus"
+            android:minWidth="@dimen/plus_minus_dim"
+            android:text="@string/minus" />
+
+        <TextView
+            android:id="@+id/TextView03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="2dp"
+            android:layout_toEndOf="@+id/schlachtschiff_size"
+            android:text="@string/schlachtschiff_row_title" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/RelativeLayout02" >
+
+        <TextView
+            android:id="@+id/uboot_size"
+            android:layout_width="48dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp" />
+
+        <Button
+            android:id="@+id/uboot_plus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:minWidth="@dimen/plus_minus_dim"
+            android:text="@string/plus" />
+
+        <Button
+            android:id="@+id/uboot_minus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_toStartOf="@+id/uboot_plus"
+            android:minWidth="@dimen/plus_minus_dim"
+            android:text="@string/minus" />
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="2dp"
+            android:layout_toRightOf="@+id/uboot_size"
+            android:text="@string/uboot_row_title" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/RelativeLayout01" >
+
+        <TextView
+            android:id="@+id/kreuzer_size"
+            android:layout_width="48dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp" />
+
+        <Button
+            android:id="@+id/kreuzer_plus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:minWidth="@dimen/plus_minus_dim"
+            android:text="@string/plus" />
+
+        <Button
+            android:id="@+id/kreuzer_minus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_toStartOf="@+id/kreuzer_plus"
+            android:minWidth="@dimen/plus_minus_dim"
+            android:text="@string/minus" />
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/kreuzer_minus"
+            android:layout_alignBottom="@+id/kreuzer_minus"
+            android:layout_alignParentStart="false"
+            android:layout_marginStart="2dp"
+            android:layout_toRightOf="@+id/kreuzer_size"
+            android:text="@string/kreuzer_boat_row_title" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout04"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/RelativeLayout03" >
+
+        <TextView
+            android:id="@+id/schwierigkeitstufe_size"
+            android:layout_width="48dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp" />
+
+        <Button
+            android:id="@+id/schwierigkeitstufe_plus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:minWidth="@dimen/plus_minus_dim"
+            android:text="@string/plus" />
+
+        <Button
+            android:id="@+id/schwierigkeitstufe_minus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_toStartOf="@+id/schwierigkeitstufe_plus"
+            android:minWidth="@dimen/plus_minus_dim"
+            android:text="@string/minus" />
+
+        <TextView
+            android:id="@+id/TextView04"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/schwierigkeitstufe_minus"
+            android:layout_alignBottom="@+id/schwierigkeitstufe_minus"
+            android:layout_alignParentStart="false"
+            android:layout_marginStart="2dp"
+            android:layout_toRightOf="@+id/schwierigkeitstufe_size"
+            android:text="@string/schwierigkeitsstufe" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/start_button_pref"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/RelativeLayout04"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:minWidth="@dimen/plus_minus_dim"
+        android:text="@string/start" />
+
+</RelativeLayout>

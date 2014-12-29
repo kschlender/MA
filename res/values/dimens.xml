@@ -1,10 +1,10 @@
 <resources>
 
-    <!-- Default screen margins, per the Android Design guidelines. -->
 <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">30.0dp</dimen>
     <dimen name="activity_vertical_margin">30.0dp</dimen>
     <dimen name="seekBarEmotionsWidth">240.0dp</dimen>
     <dimen name="seekBarProtectorsWidth">240.0dp</dimen>
+    <dimen name="plus_minus_dim">32dp</dimen>
 
 </resources>

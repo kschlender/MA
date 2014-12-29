@@ -6,14 +6,36 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.ma.schiffeversenken.TestAusgabe" >
+    tools:context="com.ma.schiffeversenken.android.view.TestAusgabe" >
 
     <TextView
         android:id="@+id/Test_Text"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:layout_marginTop="46dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/pairedDevicesText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/Test_Text"
+        android:layout_below="@+id/Test_Text"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:inputType="number" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/Test_Ausgabe_OK_Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/pairedDevicesText"
+        android:layout_below="@+id/pairedDevicesText"
+        android:text="OK" />
 
 </RelativeLayout>

@@ -16,5 +16,11 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="NoPairedDevices">Keine gekoppelten Geräte!</string>
+    <string name="BluetoothNotAvailable">Bluetooth auf diesem Gerät nicht verfügbar</string>
+    <string name="SearchingForNewDevices">Neue Geräte werden gesucht</string>
+    <string name="NoDevicesFound">Keine Geräte gefunden!</string>
+    <string name="WaitForTakers">Auf Mitspieler warten</string>
+    <string name="PleaseSelectADevice">Bitte ein Gerät auswählen</string>
     
 </resources>

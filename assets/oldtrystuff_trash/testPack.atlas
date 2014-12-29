@@ -1,0 +1,145 @@
+
+testPack.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tree
+  rotate: false
+  xy: 1, 517
+  size: 358, 476
+  orig: 358, 476
+  offset: 0, 0
+  index: -1
+ninepatch
+  rotate: false
+  xy: 361, 579
+  size: 414, 414
+  orig: 414, 414
+  offset: 0, 0
+  index: -1
+mummydown
+  rotate: false
+  xy: 1, 388
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 0
+mummydown
+  rotate: false
+  xy: 777, 866
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 1
+mummydown
+  rotate: false
+  xy: 1, 259
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 2
+mummydown
+  rotate: false
+  xy: 145, 388
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 3
+mummyleft
+  rotate: false
+  xy: 777, 737
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 0
+mummyleft
+  rotate: false
+  xy: 1, 130
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 1
+mummyleft
+  rotate: false
+  xy: 145, 259
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 2
+mummyleft
+  rotate: false
+  xy: 777, 608
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 3
+mummyright
+  rotate: false
+  xy: 1, 1
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 0
+mummyright
+  rotate: false
+  xy: 145, 130
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 1
+mummyright
+  rotate: false
+  xy: 145, 1
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 2
+mummyright
+  rotate: false
+  xy: 361, 450
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 3
+mummyup
+  rotate: false
+  xy: 505, 450
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 0
+mummyup
+  rotate: false
+  xy: 649, 450
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 1
+mummyup
+  rotate: false
+  xy: 793, 479
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 2
+mummyup
+  rotate: false
+  xy: 289, 321
+  size: 142, 127
+  orig: 142, 127
+  offset: 0, 0
+  index: 3
+snow
+  rotate: false
+  xy: 289, 191
+  size: 110, 128
+  orig: 110, 128
+  offset: 0, 0
+  index: -1
+ball
+  rotate: false
+  xy: 921, 927
+  size: 64, 66
+  orig: 64, 66
+  offset: 0, 0
+  index: -1
