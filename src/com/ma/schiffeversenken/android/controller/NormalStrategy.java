@@ -2,13 +2,13 @@ package com.ma.schiffeversenken.android.controller;
 
 import java.util.Random;
 
+import com.ma.schiffeversenken.android.model.Field;
+
 /**
  * Spielstrategie der KI in der Schwierigkeitsstufe Normal
  * @author Maik Steinborn
  */
 public class NormalStrategy implements KIStrategy{
-	/**Anzahl der Feldelemente auf dem Spielfeld - 1*/
-	public static final int FIELD_SIZE_MINUS_ONE = 99;
 	/**Das initialisierte KI Objekt*/
 	KI ki;
 	
@@ -38,7 +38,7 @@ public class NormalStrategy implements KIStrategy{
 			//Angriff auf eine neue zufaellige FeldID starten
 			do{
 				//Zufaellige Zahl erstellen
-				nextAttackID = random.nextInt(FIELD_SIZE_MINUS_ONE) + 1;
+				nextAttackID = random.nextInt(Field.FIELD_SIZE) + 1;
 			}while(ki.getEnemiesField().getElementByID(nextAttackID).getAttacked());
 		}
 		

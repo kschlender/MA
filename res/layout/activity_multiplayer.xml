@@ -9,22 +9,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.ma.schiffeversenken.android.view.Multiplayer" >
 
-    <Button
-        android:id="@+id/Create_Game_Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="170dp"
-        android:text="Spiel erstellen" />
+    <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true" >
+            
+	    <Button
+	        android:id="@+id/Create_Game_Button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:clickable="true"
+	        android:text="@string/button_text_create_game" />
+	
+	    <Button
+	        android:id="@+id/Visit_Game_Button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/Create_Game_Button"
+	        android:clickable="true"
+	        android:text="@string/button_text_visit_game" />
 
-    <Button
-        android:id="@+id/Visit_Game_Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/Create_Game_Button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:text="An Spiel teilnehmen" />
-
+    </RelativeLayout>
+    
 </RelativeLayout>

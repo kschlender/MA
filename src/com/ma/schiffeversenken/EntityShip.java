@@ -1,22 +1,20 @@
 package com.ma.schiffeversenken;
 
+import java.io.Serializable;
+import java.util.TreeMap;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 //public class EntityShip extends Sprite {
-	public class EntityShip {
+	public class EntityShip implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
 	//Texturkoordinaten
 	private Vector2 position,size;
-	TextureRegion shipTextureRegion;
-	TextureRegion shipTextureRegionAttacked;
 	Rectangle bounds;
 
 	/** Bewegung */
@@ -24,17 +22,17 @@ import com.badlogic.gdx.math.Vector2;
 
 	private float speed = 60 * 2, gravity = 60 * 1.8f;
 
-	TiledMapTileLayer collisionLayer;
+//	TiledMapTileLayer collisionLayer;
+	private String textureName;
 
 	
-	public EntityShip(TextureRegion t,TextureRegion ta,Vector2 pos, Vector2 size, TiledMapTileLayer c) {
-		// Übergabe des Sprite, wie das Schiff aussehen soll.
-		// Übergabe des ColissionLayer
-		collisionLayer = c;
+	public EntityShip(String textureName,Vector2 pos, Vector2 size) {
+		// uebergabe des Sprite, wie das Schiff aussehen soll.
+		// uebergabe des ColissionLayer
+//		collisionLayer = c;
 		this.position = pos;
 		this.size = size;
-		this.shipTextureRegion = t;
-		this.shipTextureRegionAttacked = ta;
+		this.textureName=textureName;
 		this.bounds = new Rectangle(position.x, position.y, size.x, size.y);
 	}
 
@@ -53,11 +51,11 @@ import com.badlogic.gdx.math.Vector2;
 		// IDEA of colision detection
 		/*
 		 * alte koordinaten und neue koordinaten die neuen koordinaten werden
-		 * geprüft auf kolisition wenn die neuen koordinaten ungültig sind dann
+		 * geprueft auf kolisition wenn die neuen Koordinaten ungueltig sind dann
 		 * sollen die alten koordinaten genommen werden andernfalls werden die
-		 * neuen überprüften koordinaten übergeben als aktuelle position.
+		 * neuen ueberprueften Koordinaten uebergeben als aktuelle Position.
 		 * 
-		 * Für die performance geht man hin und betrachtet nur die Bereiche von
+		 * Fuer die performance geht man hin und betrachtet nur die Bereiche von
 		 * der Map die jeweils in der Richtung in der gegangen wird liegen.
 		 * undzwar die 3 direkt angrenzenden tiles
 		 */
@@ -70,7 +68,7 @@ import com.badlogic.gdx.math.Vector2;
 		// zu neuer Position x wandern.
 		setX(getX() + velocity.x * deltaTime);
 
-//		// prüfen ob wir nach rechts oder links gehen
+//		// pruefen ob wir nach rechts oder links gehen
 //		if (velocity.x < 0) {
 //			// richtung links
 //			// top left
@@ -116,7 +114,7 @@ import com.badlogic.gdx.math.Vector2;
 //						.getProperties().containsKey("blocked");
 //		}
 //
-//		//Reaktion auf collisionX. Übergeben wir bei Kollision die alte xpos
+//		//Reaktion auf collisionX. Uebergeben wir bei Kollision die alte xpos
 //		if(collisionX){
 //			setX(oldX);
 //			velocity.x=0;//um nicht gegen die Wand zu fahren
@@ -126,7 +124,7 @@ import com.badlogic.gdx.math.Vector2;
 		// zu neuer Position > wandern.
 		setY(getY() + velocity.y * deltaTime);
 
-//		// prüfen ob wir nach oben oder unten gehen
+//		// Pruefen ob wir nach oben oder unten gehen
 //		if (velocity.y < 0) {
 //			// richtung unten
 //			// bottom left
@@ -169,7 +167,7 @@ import com.badlogic.gdx.math.Vector2;
 //		}
 //		
 //
-//		//Reaktion auf collisionY. Übergeben wir bei Kollision die alte xpos
+//		//Reaktion auf collisionY. Uebergeben wir bei Kollision die alte xpos
 //		if(collisionY){
 //			setY(oldY);
 //			velocity.x=0;//um nicht gegen die Wand zu fahren
@@ -200,13 +198,13 @@ import com.badlogic.gdx.math.Vector2;
 		this.gravity = gravity;
 	}
 
-	public TiledMapTileLayer getCollisionLayer() {
-		return collisionLayer;
-	}
-
-	public void setCollisionLayer(TiledMapTileLayer collisionLayer) {
-		this.collisionLayer = collisionLayer;
-	}
+//	public TiledMapTileLayer getCollisionLayer() {
+//		return collisionLayer;
+//	}
+//
+//	public void setCollisionLayer(TiledMapTileLayer collisionLayer) {
+//		this.collisionLayer = collisionLayer;
+//	}
 	
 
 	public float getX() {
@@ -227,14 +225,14 @@ import com.badlogic.gdx.math.Vector2;
 		this.position.y=y;
 	}
 
-	public void render(Batch batch,boolean attacked) {
+	public void render(Batch batch,boolean attacked,TreeMap<String, TextureRegion> shipTextures) {
 		// Beim Zeichnen wird update vorher aufgerufen mit xpos und ypos
 		// aktualisiert
 		update(Gdx.graphics.getDeltaTime());
 		if(!attacked){
-			batch.draw(this.shipTextureRegion,position.x, position.y, size.x, size.y);
+			batch.draw(shipTextures.get(textureName),position.x, position.y, size.x, size.y);
 		}else{
-			batch.draw(this.shipTextureRegionAttacked,position.x, position.y, size.x, size.y);
+			batch.draw(shipTextures.get(textureName+"a"),position.x, position.y, size.x, size.y);
 		}
 //		batch.draw(new Sprite(texture.getTextureRegion().getTexture()), x, y, texture.getTextureRegion().getTexture().getWidth(), texture.getTextureRegion().getTexture().getHeight());	
 	
@@ -246,16 +244,14 @@ import com.badlogic.gdx.math.Vector2;
 		
 	}
 
-	public TextureRegion getShipTextureRegion() {
-		return shipTextureRegion;
-	}
-
-	public void setShipTextureRegion(TextureRegion shipTextureRegion,TextureRegion shipTextureRegionAttacked) {
-		this.shipTextureRegion = shipTextureRegion;
-		this.shipTextureRegionAttacked=shipTextureRegionAttacked;
+	public void setShipTextureRegion(String textureName) {
+		this.textureName=textureName;
 	}
 	
-	
+	@Override
+	public String toString(){
+		return textureName;
+	}
 	
 	
 }

@@ -8,8 +8,6 @@ import com.ma.schiffeversenken.android.view.VisitMultiplayerGame;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
-import android.content.res.Resources;
 
 /**
  * Verbindet sich mit einem offenem Server Port (Client)
@@ -23,19 +21,22 @@ public class BluetoothConnectThread extends Thread {
     /**Initialisiertes VisitMultiplayerGame Objekt*/
     VisitMultiplayerGame vmgClass;
     /**Initialisiertes Game Objekt, das spaeter an den BluetoothConnectedThread-Thread weitergegeben wird*/
-    Game game;
+    private boolean reconnect;
  
     /**
      * Erstellt ein BluetoothConnectThread Objekt
      * @param device Verbundene Geraete
      * @param bluetoothAdapter Der Bluetooth Adapter des Geraetes
+     * @param vmgClass Initialisiertes VisitMultiplayerGame Objekt
+     * @param uuid Eindeutige ID zur Identifizierung der App über Bluetooth
+     * @param reconnect true oder false ob dies ein erneuter Verbindungsversuch ist
      */
-    public BluetoothConnectThread(BluetoothDevice device, BluetoothAdapter bluetoothAdapter, VisitMultiplayerGame vmgClass, Game game, String uuid) {
+    public BluetoothConnectThread(BluetoothDevice device, BluetoothAdapter bluetoothAdapter, VisitMultiplayerGame vmgClass, String uuid, boolean reconnect) {
     	//Temporaeres Objekt benutze, da bluetoothSocket final ist
         BluetoothSocket tmp = null;
         this.bluetoothAdapter = bluetoothAdapter;
         this.vmgClass = vmgClass;
-        this.game = game;
+        this.reconnect = reconnect;
  
         //Bluetoothsocket erstellen
         try {
@@ -47,6 +48,9 @@ public class BluetoothConnectThread extends Thread {
         bluetoothSocket = tmp;
     }
     
+    /**
+     * BluetoothConnectThread-Thread starten
+     */
     public void run() {
         //Suche stoppen
     	bluetoothAdapter.cancelDiscovery();
@@ -69,7 +73,7 @@ public class BluetoothConnectThread extends Thread {
  
         //Verbindung in separatem Thread verwalten
         manageConnectedSocket(bluetoothSocket);
-        vmgClass.startGame();
+        if(!reconnect) vmgClass.startGame();
     }
  
     /**
@@ -78,11 +82,21 @@ public class BluetoothConnectThread extends Thread {
      * @param socket Aufgebaute Bluetooth Socket Verbindung zum Server
      */
     private void manageConnectedSocket(BluetoothSocket socket) {
-    	BluetoothConnectedThread btConnectedThread = new BluetoothConnectedThread(socket, vmgClass, null, this.bluetoothAdapter, this.game);
-    	btConnectedThread.start();
+    	BluetoothConnectedThread btConnectedThread = null;
     	
-    	boolean attackHit = true;
-    	boolean shipDestroyed = false;
-    	btConnectedThread.write((new String("_RETURN_" + Boolean.toString(attackHit) + "_" + Boolean.toString(shipDestroyed))).getBytes());
+    	if(reconnect){
+    		//Bei wiederholtem Verbindungsversuch
+    		btConnectedThread = BluetoothConnectedThread.getInstance();
+			Game game = btConnectedThread.getGame();
+			btConnectedThread = new BluetoothConnectedThread(socket, vmgClass, null, this.bluetoothAdapter);
+			btConnectedThread.setGame(game);
+			game.setBluetoothConnectedThread(btConnectedThread);
+    	}
+    	else{
+    		//Bei erstem Verbindungsversuch
+    		btConnectedThread = new BluetoothConnectedThread(socket, vmgClass, null, this.bluetoothAdapter);
+    	}
+    	
+    	btConnectedThread.start();
 	}
 }

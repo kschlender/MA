@@ -7,7 +7,7 @@ public class Tile {
 	
 	float x,y,width,height;
 	Texture texture;
-	
+	@Deprecated
 	public Tile(float x, float y, float width, float height, Texture texture) {
 		super();
 		this.x = x;

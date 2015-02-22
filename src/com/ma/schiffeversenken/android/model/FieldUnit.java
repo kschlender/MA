@@ -1,13 +1,8 @@
 package com.ma.schiffeversenken.android.model;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.Json.Serializable;
-import com.badlogic.gdx.utils.JsonValue;
+
+
+
 import com.ma.schiffeversenken.EntityShip;
 
 /**
@@ -17,6 +12,15 @@ import com.ma.schiffeversenken.EntityShip;
  * @author Klaus Schlender
  */
 public class FieldUnit{
+
+	/**Rechte Kante*/
+	public static final int EDGE_RIGHT = 0;
+	/**Obere Kante*/
+	public static final int EDGE_ABOVE = 1;
+	/**Linke Kante*/
+	public static final int EDGE_LEFT = 2;
+	/**Untere Kante*/
+	public static final int EDGE_BELOW = 3;
 	/** Direkte Nachbarn dieses Feldes */
 	FieldUnit lNeighbor, rNeighbor, oNeighbor, uNeighbor;
 	/** Schiff, das auf diesem FeldElement steht */
@@ -36,13 +40,8 @@ public class FieldUnit{
 	/** Segment des Schiffs: 0=Vorderteil, 1=Mittelteil, 2=Hinterteil */
 	private int shipSegment;
 
-	// OpenGL Elemente
-	private TextureRegion drawFeld;
-	private Sprite sprite;
-	private String textureName;
 	private float xpos;
 	private float ypos;
-	private Field myField;
 	private int animationtimer=0;
 	/** Dient zum Zeichnen des Schiffs*/
 	private EntityShip entityShip;
@@ -62,8 +61,12 @@ public class FieldUnit{
 		this.placedShip = null;
 	}
 
+	public void setPlacedShip(Ship ship){
+		this.placedShip = ship;
+	}
+	
 	/**
-	 * Überladener Konstruktor
+	 * Ueberladener Konstruktor
 	 * 
 	 * @param id
 	 *            Die eindeutige ID dieses Feldelements
@@ -72,14 +75,13 @@ public class FieldUnit{
 	 * @param ypos
 	 *            Y-Koordinate
 	 */
-	public FieldUnit(int id, float xpos, float ypos, Field myField) {
+	public FieldUnit(int id, float xpos, float ypos) {
 		this.id = id;
 		this.occupied = false;
 		this.attacked = false;
 		this.placedShip = null;
 		this.xpos = xpos;
 		this.ypos = ypos;
-		this.myField = myField;
 	}
 
 	/**
@@ -221,7 +223,7 @@ public class FieldUnit{
 	}
 
 	/**
-	 * Für das Zeichnen in Opengl Koordinaten benötigt
+	 * Fuer das Zeichnen in Opengl Koordinaten benoetigt
 	 * 
 	 * @return position
 	 */
@@ -230,25 +232,25 @@ public class FieldUnit{
 	}
 
 	/**
-	 * Für das Zeichnen in Opengl Koordinaten benötigt
+	 * Fuer das Zeichnen in Opengl Koordinaten benoetigt
 	 * 
-	 * @return position
+	 * @param xpos X-Koordinate
 	 */
 	public void setXpos(float xpos) {
 		this.xpos = xpos;
 	}
 
 	/**
-	 * Für das Zeichnen in Opengl Koordinaten benötigt
+	 * Fuer das Zeichnen in Opengl Koordinaten benoetigt
 	 * 
-	 * @return position
+	 * @return Y-Koordinate
 	 */
 	public float getYpos() {
 		return ypos;
 	}
 
 	/**
-	 * Für das Zeichnen in Opengl Koordinaten benötigt
+	 * Fuer das Zeichnen in Opengl Koordinaten benoetigt
 	 * 
 	 * @return position
 	 */
@@ -257,10 +259,10 @@ public class FieldUnit{
 	}
 
 	/**
-	 * Das Schiff bekommt eine EntityShip Unit übergeben für das Zeichnen
+	 * Das Schiff bekommt eine EntityShip Unit uebergeben fuer das Zeichnen
 	 * 
 	 * @param e
-	 *            EntityShip für das Zeichnen des Schiffteils
+	 *            EntityShip fuer das Zeichnen des Schiffteils
 	 */
 	public void setEntityShipDrawUnit(EntityShip e) {
 		this.entityShip = e;
@@ -268,7 +270,7 @@ public class FieldUnit{
 	}
 
 	/**
-	 * Gibt das EntityShip von dem Schiff für das Zeichnen zurück
+	 * Gibt das EntityShip von dem Schiff fuer das Zeichnen zurueck
 	 */
 	public EntityShip getEntityShipDrawUnit() {
 		return entityShip;
@@ -276,8 +278,8 @@ public class FieldUnit{
 	}
 
 	/**
-	 * Animationstimer soll eine animation unterstützen
-	 * durch hochzählen der werte bis zu einem Wert.
+	 * Animationstimer soll eine animation unterstuetzen
+	 * durch hochzaehlen der werte bis zu einem Wert.
 	 * @return int Hilfsvariable Animationstimer 
 	 */
 	public int getAnimationtimer() {
@@ -285,34 +287,46 @@ public class FieldUnit{
 	}
 
 	/**
-	 * Animationstimer soll eine animation unterstützen
-	 * durch hochzählen der werte bis zu einem Wert.
-	 * @param animationtimer Wert für die Hilfsvariable
+	 * Animationstimer soll eine animation unterstuetzen
+	 * durch hochzaehlen der werte bis zu einem Wert.
+	 * @param animationtimer Wert fuer die Hilfsvariable
 	 */
 	public void setAnimationtimer(int animationtimer) {
 		this.animationtimer = animationtimer;
 	}
 
+	/**
+	 * Den direkten linken Nachbarn dieses Feldelements zurueckgeben
+	 * @return Den direkten linken Nachbarn
+	 */
 	public FieldUnit get_lNeighbor() {
 		return lNeighbor;
 	}
 
+	/**
+	 * Den direkten rechten Nachbarn dieses Feldelements zurueckgeben
+	 * @return Den direkten rechten Nachbarn
+	 */
 	public FieldUnit get_rNeighbor() {
 		return rNeighbor;
 	}
 
-
+	/**
+	 * Den direkten oberen Nachbarn dieses Feldelements zurueckgeben
+	 * @return Den direkten oberen Nachbarn
+	 */
 	public FieldUnit get_oNeighbor() {
 		return oNeighbor;
 	}
 
+	/**
+	 * Den direkten unteren Nachbarn dieses Feldelements zurueckgeben
+	 * @return Den direkten unteren Nachbarn
+	 */
 	public FieldUnit get_uNeighbor() {
 		return uNeighbor;
 	}
 	
-	public Field get_myField(){
-		return myField;
-	}
 
 	/**
 	 * Ausrichtung des Schiffs: 0=rechts, 1=oben, 2=links, 3=unten 
@@ -322,10 +336,12 @@ public class FieldUnit{
 		 this.orientation=orientation;
 	}
 	
+	/**
+	 * Die Orientierung des Schiffs zurueckgeben
+	 * @return Die Orientierung des Schiffs
+	 */
 	public int getShipOrientation(){
 		return orientation;
 	}
 
-	
-	
 }

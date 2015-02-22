@@ -1,11 +1,9 @@
 package com.ma.schiffeversenken;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import android.content.Context;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -24,12 +22,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -40,44 +40,47 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.ma.schiffeversenken.android.AndroidLauncher;
+import com.ma.schiffeversenken.android.controller.BluetoothConnectedThread;
 import com.ma.schiffeversenken.android.controller.Game;
-import com.ma.schiffeversenken.android.model.GamePreferences;
+import com.ma.schiffeversenken.android.model.Allgemeinesdreieck;
+import com.ma.schiffeversenken.android.model.Field;
 import com.ma.schiffeversenken.android.model.Player;
-import com.ma.schiffeversenken.android.model.Ship;
-
+import com.ma.schiffeversenken.android.view.BackActivity;
+/**
+ * Klasse Handelt die Game Screens.
+ * 
+ * @author Klaus Schlender
+ */
 public class GameFieldScreen implements Screen {
 
-	public static final String TITLE = "Schiffeversenken 1.0: ";
+	public static final String TITLE = "Schiffeversenken 1.0";
+	public static int buttonwidth;
+	public static int buttonheight;
 
 	private TiledMap map;
 	private TiledMapTileLayer mapTileLayer;
 	private TiledMapTileSet tileSetShips;
 
-	// Renderer hält einen SpriteBatch fürs zeichnen bereit
+	// Renderer haelt einen SpriteBatch fuers zeichnen bereit
 	private OrthogonalTiledMapRenderer renderer;
 	private Batch batch;
 	public static OrthographicCamera camera;
 
-	// höhe und breite
+	// Hoehe und Breite
 	private int h;
 	private int w;
 
-	// Einheitsgröße der Texturen
+	// Einheitsgroesse der Texturen
 	public static final int size = 64;
-
-	// Environment für Lichtefekkte
+	
+	// Environment fuer Lichtefekkte
 	private Environment environment;
 
 	// Spiellogic
 	private Player player;
-	private ArrayList<EntityShip> tilesPlayerShips;
-	private ArrayList<EntityShip> tilesEnemyShips;
-	private Iterator<EntityShip> tileIterator;
 
-	// TEstzwecke
-	private EntityShip ship;
-
-	// Texturen für Schrift und buttons
+	// Texturen fuer Schrift und buttons
 	private Stage stage;
 	private Skin skin;
 	private Table table;
@@ -86,43 +89,52 @@ public class GameFieldScreen implements Screen {
 	private TextButton buttonGenerateShips=null, buttonSelfPlaceShips=null, buttonStart=null,buttonClearShips=null;
 	private BitmapFont white, black;
 	private Label heading;
+	private LabelStyle headingStyle;
 
 	// Background State
 	private int[] background = { 0 }, water = { 1 }, ships = { 2 },
 			attack = { 3 };
 
-	// ShapeRenderer für GridObjekte
+	// ShapeRenderer fuer GridObjekte
 	private ShapeRenderer sr;
 
 	private float layerX;
 	private float layerY;
 	private float layerZoom;
-	private ArrayList<Boolean> state;// 0=Intro, 1=FullView 2=GameFieldZoom,
-										// 3=PlayerShips,4=EnemyShips,5=GameGrid
+	// 0=Intro, 1=FullView, 2=GameFieldZoom, 3=PlayerShips, 4=EnemyShips,
+	// 5=GameFieldGrid 6=PlayerGrid, 7=EnemyGrid,8=NewGame
+	private ArrayList<Boolean> state;
 
 	// Intro Textur
 	private Texture introTexture;
 	private TextureRegion introTextureRegion;
-
 	private CameraController controller;
-
 	private GestureDetector gestureDetector;
-
 	private Texture randTexture;
-
 	private TextureRegion randTextureRegion;
-
 	private TextureRegion randTextureRegionUp;
-
 	private TextureRegion randTextureRegionUpRight;
-
-	GamePreferences mGamePreferences;
-
 	private InputMultiplexer inputMultiplexer;
 
 	//Einstellung wie viele Schiffe zu setzensind.
 	private ArrayList<Integer> schiffsEinstellung;
 
+	private boolean primaryBTGame, secondaryBTGame;
+	private TextButton buttonRestart;
+	private MyGdxGameField parentScreen;
+	private boolean restartGame;
+	
+	public GameFieldScreen(boolean restartGame, MyGdxGameField parentScreen, boolean primaryBTGame, boolean secondaryBTGame){
+		this.restartGame=restartGame;
+		this.parentScreen=parentScreen;
+		this.primaryBTGame = primaryBTGame;
+		this.secondaryBTGame = secondaryBTGame;
+		//Fuer Meldungen ausserhalb der Anwendung innerhalb BluetoothConnectedThread
+		if(parentScreen.getAndroidLauncher()!=null&&primaryBTGame||secondaryBTGame){
+		BluetoothConnectedThread.getInstance().setAndroidLauncher(parentScreen.getAndroidLauncher());
+		}
+	}
+	
 	@Override
 	public void show() {
 		// Tiled Maps,Layer und tileSet laden um diese zu nutzen
@@ -130,43 +142,50 @@ public class GameFieldScreen implements Screen {
 		mapTileLayer = (TiledMapTileLayer) map.getLayers().get("0");
 		tileSetShips = map.getTileSets().getTileSet("ships");
 
-		// Get Texture Pack TODO Texturen aus TiledMap holen.
-		atlas = new TextureAtlas(Gdx.files.internal("graphics//textures.atlas"));
-
 		// graphics High and width
 		h = Gdx.graphics.getHeight();
 		w = Gdx.graphics.getWidth();
-		// Wegen resize Aufruf nach erstellen ist die übergabe von w/h unnötig
+		
+		//Buttongestaltung initialisieren.
+		buttonwidth=(int) (w*0.3);
+		buttonheight=(int) (w*0.1);
+		
+		//Kamera einstellung
+		//Wegen resize Aufruf nach erstellen ist hier die Uebergabe von w/h unnoetig
 		camera = new OrthographicCamera();
-		// camera.zoom 1.4 camera.position.x 510.0 camera.position.y 710.0
 		camera.viewportWidth = w;
 		camera.viewportHeight = h;
+		
 		layerX = mapTileLayer.getWidth() * mapTileLayer.getTileWidth() / 2;
 		layerY = mapTileLayer.getHeight() * mapTileLayer.getTileHeight() / 2;
-		camera.position.set(-layerX, layerY, 0);
-		// zoomarichmetik um jede Auflösung zu unterstützen
+		if(restartGame){
+			camera.position.set(layerX, layerY, 0);			
+		}else{
+			camera.position.set(-layerX, layerY, 0);			
+		}
+		//Eigene Formel fuer Zoom-Arichmetik um jede Aufloesung zu unterstuetzen
 		float zoomfaktor = ((0.95f * 1920 / h));
 		camera.zoom = zoomfaktor;
 		layerZoom = camera.zoom;
 		camera.update();
 
-		// TODO LADEN ERWEITERN
-		loadPlayerData();
-
 		// State initialisieren
 		state = new ArrayList<Boolean>();
-		for (int i = 0; i < 8; i++) {
-			state.add(new Boolean(false));
+		for (int i = 0; i < 9; i++) {
+			state.add(Boolean.valueOf(false));
 		}
 		// Intro
 		state.set(0, true);
 		
-		//TODO CameraController übergeben wie viele Schiffe zu setzen.
+		// TODO LADEN ERWEITERN
+		loadPlayerData();
+		
+		//Standarteinstellung
 		schiffsEinstellung = new ArrayList<Integer>(4);
-		 schiffsEinstellung.add(4);//0, kreuzer
-		 schiffsEinstellung.add(3);//1,Uboot
-		 schiffsEinstellung.add(2);//2,schlachtschiff
-		 schiffsEinstellung.add(1);//3,Zerstörer
+		schiffsEinstellung.add(4);//0, kreuzer
+		schiffsEinstellung.add(3);//1,Uboot
+		schiffsEinstellung.add(2);//2,schlachtschiff
+		schiffsEinstellung.add(1);//3,Zerstoerer
 		// Touch Events
 		controller = new CameraController(camera, layerX, layerY, layerZoom,
 				player,state,schiffsEinstellung);
@@ -183,7 +202,7 @@ public class GameFieldScreen implements Screen {
 		// SpriteBatch vom Renderer
 		batch = renderer.getSpriteBatch();
 
-		// Neuer ShapeRenderer um Objektlayer zu zeichnen fürs GameGrid
+		// Neuer ShapeRenderer um Objektlayer zu zeichnen fuers GameGrid
 		sr = new ShapeRenderer();
 
 		// Background Texturen laden.
@@ -204,20 +223,23 @@ public class GameFieldScreen implements Screen {
 		skin = new Skin(atlas);
 
 		table = new Table(skin);
-		// Set table to whole Screen
-		table.setBounds(layerX*0.1f, layerY*0.6f, layerX*0.9f, layerY*0.7f);// Container für Label und Buttons
+		table2 = new Table(skin);
+		//Tabellenausrichtung
+		table.setBounds(0, 0, w, h*1.76f);// Container fï¿½r Label und Buttons
 
 		//Fonts erstellen
 		white = new BitmapFont(Gdx.files.internal("font/Latin_white.fnt"),
 				false);
+		white.setScale(w*0.002f);
 		black = new BitmapFont(Gdx.files.internal("font/Latin_black.fnt"),
 				false);
+		black.setScale(w*0.002f);
 		
 		//Erstellen des Headers
-		final LabelStyle headingStyle = new LabelStyle(white,Color.WHITE);
-		heading = new Label("Schiffe", headingStyle);
+		headingStyle = new LabelStyle(white,Color.WHITE);
+		heading = new Label("Schiffeversenken", headingStyle);
 
-		// Animationen für den Button
+		// Animationen fuer den Button
 		TextButtonStyle textButtonStyle = new TextButtonStyle();
 		textButtonStyle.up = skin.getDrawable("buttonUp");
 		textButtonStyle.down = skin.getDrawable("buttonDown");
@@ -228,7 +250,7 @@ public class GameFieldScreen implements Screen {
 		// Button erstellen mit dem Style
 		buttonGenerateShips = new TextButton("generieren",
 				textButtonStyle);
-		buttonGenerateShips.pad(5);
+		buttonGenerateShips.pad((int)(w*0.02f));
 		buttonGenerateShips.addListener(new ClickListener(){
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -243,116 +265,126 @@ public class GameFieldScreen implements Screen {
 		});
 		
 		buttonSelfPlaceShips = new TextButton("platzieren",textButtonStyle);
-		buttonSelfPlaceShips.pad(5);
+		buttonSelfPlaceShips.pad((int)(w*0.02f));
 		buttonSelfPlaceShips.addListener(new ClickListener(){
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if(player.getGame().getFirstFieldPlayer().isAllShipsSet()){
-					player.getGame().getFirstFieldPlayer().resetField();//Spielfeld zurücksetzen
+					player.getGame().getFirstFieldPlayer().resetField();
+					controller.setShipPlaceHelper(schiffsEinstellung);
 				}
-				CameraController.changeStateTo(state, 3, true);
 				table.clear();
-//				table.moveBy(0, -layerY*0.1f);
-				table.add(buttonGenerateShips);
-				table.add().minWidth(10);
-				table.add(buttonStart);
-				table.add().minWidth(10);
-				table.add(buttonClearShips);
+				table.add(heading).colspan(1);
+				table.row();
+				table.add(buttonStart).minWidth(buttonwidth).minHeight(buttonheight);
+				table.row();
+				table.add().minHeight(buttonwidth*0.02f);
+				table.row();
+				table.add(buttonGenerateShips).minWidth(buttonwidth).minHeight(buttonheight);
+				table.row();
+				table.add().minHeight(buttonwidth*0.02f);
+				table.row();
+				table.add(buttonClearShips).minWidth(buttonwidth).minHeight(buttonheight);
 				
-				table2 = new Table(skin);
-				table2.setBounds(layerX*0.1f, layerY*0.5f, layerX*0.9f, layerY*0.7f);
-				table2.add(new Label("Drücke auf ein Feld",headingStyle)).colspan(5);
+				table2.clear();
+				table2.setBounds(0, 0, w, h*0.2f);
+				table2.add(new Label("DrÃ¼cke auf ein Feld um",headingStyle)).colspan(5);
 				table2.row();
-				table2.add(new Label("um ein Schiff zu platzieren",headingStyle)).colspan(5);
+				table2.add().minHeight(buttonheight*0.1f);
 				table2.row();
-				table2.add(new Label("und ziehe es in die gewünschte Richtung",headingStyle)).colspan(5);
-				stage.addActor(table2);
+				table2.add(new Label("ein Schiff zu platzieren.",headingStyle)).colspan(5);
+				table2.row();
+				table2.add().minHeight(buttonheight*0.1f);
+				table2.row();
+				table2.add(new Label("FÃ¼r groÃŸe Schiffe ziehe es in",headingStyle)).colspan(5);
+				table2.row();
+				table2.add().minHeight(buttonheight*0.1f);
+				table2.row();
+				table2.add(new Label("die gewÃ¼nschte Richtung",headingStyle)).colspan(5);
+				CameraController.changeStateTo(3, true,false);
 			}
 		});
 		
-		buttonClearShips = new TextButton("löschen",textButtonStyle);
-		buttonClearShips.pad(5);
+		buttonClearShips = new TextButton("lÃ¶schen",textButtonStyle);
+		buttonClearShips.pad((int)(w*0.02f));
 		buttonClearShips.addListener(new ClickListener(){
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-					player.getGame().getFirstFieldPlayer().resetField();//Spielfeld zurücksetzen
+					player.getGame().getFirstFieldPlayer().resetField();//Spielfeld zuruecksetzen
 					controller.setShipPlaceHelper(schiffsEinstellung);
 			}
 		});
 		
 		buttonStart = new TextButton("Start",textButtonStyle);
-		buttonStart.pad(5);
+		buttonStart.pad((int)(w*0.02f));
 		buttonStart.addListener(new ClickListener(){
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if(player.getGame().getSecondFieldEnemy().isAllShipsSet()){
-					if(player.getGame().getFirstFieldPlayer().isAllShipsSet()){
-						//Setzen der Schiffe und Starten.
+			public void clicked(InputEvent event, float x, float y) {					
+				Gdx.input.setInputProcessor(gestureDetector);
+				if(player.getGame().getSecondFieldEnemy().isAllShipsSet() || primaryBTGame || secondaryBTGame){
+					//Setzen der Schiffe und Starten.
+					if(player.getGame().getFirstFieldPlayer().isAllShipsSetManual()){
+						//Wenn schiffe manuell gesetzt sind muessen diese aufs Feld plaziert werden.
 						player.getGame().getFirstFieldPlayer().setManualNewShipplacement(controller.getPlacedShipUnits());
-						ArrayList<Integer> tmpEmptyShipList = new ArrayList<Integer>(4);
-						tmpEmptyShipList.add(0);
-						tmpEmptyShipList.add(0);
-						tmpEmptyShipList.add(0);
-						tmpEmptyShipList.add(0);
-						controller.setShipPlaceHelper(tmpEmptyShipList);
-						
-						CameraController.changeStateTo(state, 2, false);
-						
-						//TODO DEBUGGEN
-						for(Ship s: player.getFirstField().getShips()){
-							Gdx.app.log("Schiff Manuell Plaziert: ", s.getName()+" Back at y:"+s.getLocation()[0].getYpos());
-						}
-						
-						try {
-							//TODO Optimieren für BLuetooth
-							player.getGame().start();
-						} catch (InterruptedException e) {
-							Gdx.app.log("player.getGame().start();", "InterruptedException, cant Start Thread");
-							e.printStackTrace();
-						}
-					}else{
-						//Setzen der Schiffe und Starten.
+					}else if(!player.getGame().getFirstFieldPlayer().isAllShipsSet()){
+						//Setzen der Schiffe wenn diese noch nicht plaziert sind.
 						player.getGame().getFirstFieldPlayer().generateNewShipplacement(schiffsEinstellung);
-						ArrayList<Integer> tmpEmptyShipList = new ArrayList<Integer>(4);
-						tmpEmptyShipList.add(0);
-						tmpEmptyShipList.add(0);
-						tmpEmptyShipList.add(0);
-						tmpEmptyShipList.add(0);
-						controller.setShipPlaceHelper(tmpEmptyShipList);
-						CameraController.changeStateTo(state, 2, false);
-						
+					}
+
+					//Resetten vom ShipPlaceHelper im CameraController
+					ArrayList<Integer> tmpEmptyShipList = new ArrayList<Integer>(4);
+					tmpEmptyShipList.add(0);
+					tmpEmptyShipList.add(0);
+					tmpEmptyShipList.add(0);
+					tmpEmptyShipList.add(0);
+					controller.setShipPlaceHelper(tmpEmptyShipList);
+					
+					if(primaryBTGame||secondaryBTGame){
+						do{
+						//Felduebertragen erneut versuchen bei Fehlschlag.
 						try {
-							//TODO Optimieren für BLuetooth
-							player.getGame().start();
+							player.getGame().getFirstFieldPlayer().sendFieldUnitsWithBluetooth();
+							Thread.sleep(Game.FIVEHUNDRED_MS);
 						} catch (InterruptedException e) {
-							Gdx.app.log("player.getGame().start();", "InterruptedException, cant Start Thread");
 							e.printStackTrace();
 						}
+						}while(!player.getGame().getFirstFieldPlayer().getFeldUebertragenAntwort());
+						CameraController.changeStateTo(2, false,false);
+					}else{//Singleplayer
+						CameraController.changeStateTo(2, false,false);
 					}
+					player.getGame().start();
 				}
-
 			}
 		});
 		
-
+		buttonRestart = new TextButton("Neustart",textButtonStyle);
+		buttonRestart.pad((int)(w*0.02f));
+		buttonRestart.addListener(new ClickListener(){
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+//				loadPlayerData();				
+				parentScreen.create(true);
+			}
+		});
 		
-		// Hinzufügen vom Elementen zur Tabelle Start
-//		table.debug();
-//		table.center();
-		table.add(heading).colspan(5);
+		// Hinzufuegen vom Elementen zur Tabelle bei Start
+		table.add(heading).colspan(1);
 		table.row();
-		table.add(buttonGenerateShips);
-		table.add().minWidth(10);
-		table.add(buttonStart);
-		table.add().minWidth(10);
-		table.add(buttonSelfPlaceShips);
-//		table.row();
-	
+		table.add(buttonStart).minWidth(buttonwidth).minHeight(buttonheight);
+		table.row();
+		table.add().minHeight(buttonwidth*0.02f);
+		table.row();
+		table.add(buttonGenerateShips).minWidth(buttonwidth).minHeight(buttonheight);
+		table.row();
+		table.add().minHeight(buttonwidth*0.02f);
+		table.row();
+		table.add(buttonSelfPlaceShips).minWidth(buttonwidth).minHeight(buttonheight);
 
-		// table.debug();//Rote lienien zum Debuggen
 		stage.addActor(table);
+		stage.addActor(table2);
 		
-		//Setzen von InputListenern
+		//Setzen von mehreren InputListenern
 		inputMultiplexer = new InputMultiplexer();
 		inputMultiplexer.addProcessor(gestureDetector);
 		inputMultiplexer.addProcessor(stage);
@@ -360,7 +392,7 @@ public class GameFieldScreen implements Screen {
 	}
 
 	/**
-	 * Methode lädt alte Spieldaten
+	 * Methode lï¿½dt alte Spieldaten
 	 */
 	private void loadPlayerData() {
 		if (Gdx.files.local("player.bin").exists()
@@ -373,12 +405,12 @@ public class GameFieldScreen implements Screen {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			// TODO TEST OB LADEN GEHT
+			// TODO Erweitern
 		} else {
 			System.out
 					.println("Player does not exist. Creating new player ...");
 			try {
-				player = new Player(tileSetShips, map);
+				player = new Player(tileSetShips, map, primaryBTGame, secondaryBTGame);
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -386,14 +418,12 @@ public class GameFieldScreen implements Screen {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// TODO TEST OB LADEN
+			
 		}
 	}
 
 	@Override
 	public void render(float delta) {
-	
-
 		// Gdx.app.log(TITLE, "render(...)");
 		player.update(camera);
 		controller.update();
@@ -403,14 +433,14 @@ public class GameFieldScreen implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.setProjectionMatrix(camera.combined);
 
-		// Dem Renderer die camera übergeben.
+		// Dem Renderer die Kamera uebergeben.
 		renderer.setView(camera);
 		renderer.render();
 
 		// Animation bg
-		renderer.render(ships);
+//		renderer.render(ships);
 
-		// Draw Stuff
+		// Draw Stuff		
 		// Randgebiete
 		batch.begin();
 		batch.draw(introTextureRegion, -layerX * 2, layerY * 2);
@@ -421,7 +451,7 @@ public class GameFieldScreen implements Screen {
 		batch.draw(introTextureRegion, layerX * 2, -layerY * 2);
 		batch.draw(randTextureRegion, layerX * 2, 0);
 		batch.draw(introTextureRegion, -layerX * 2, 0);
-		// Weiter Außerhalb
+		// Weiter Ausserhalb
 		// links
 		batch.draw(introTextureRegion, -layerX * 2 * 2, layerY * 2);
 		batch.draw(introTextureRegion, -layerX * 2 * 2, 0);
@@ -449,69 +479,92 @@ public class GameFieldScreen implements Screen {
 		player.draw(batch);
 		batch.end();
 
-		// Animation bg
-		renderer.render(attack);
+		// Animation bg Attack layer
+//		renderer.render(attack);
 
 		// TODO Animate Fireing some canons and ships getting into position.
-		player.animatedTiles();
-
-		if (state.get(5) || state.get(6) || state.get(7)) {
+//		player.animatedTiles();
+		if (state.get(2)||state.get(5) || state.get(6) || state.get(7)) {
 			// render Objects
 			// Wie renderer.setView(camera.combined) Transformieren der Shapes
-			// auf
-			// die cam position/koordinaten.
+			// auf die cam position/koordinaten.
 			sr.setProjectionMatrix(camera.combined);
 			sr.setColor(Color.GRAY);
-			String objektebene = "GameField";
-			if (state.get(5)) {
+			String objektebene = "";
+			if (state.get(5)) {//Arrow when Player Turn
 				objektebene = "GameField";
 			}
 			if (state.get(6)) {
 				objektebene = "GameFieldPlayer";
 			}
-			if (state.get(7)) {
+			if (state.get(7)||state.get(2)&&!player.getGame().isEnd()) {
 				objektebene = "GameFieldEnemy";
 			}
 
+			if(!objektebene.equals("")){
+				
 			// RectangleMapObject, CircleMapObject,
 			// PolylineMapObject, EllipseMapObject, PolygonMapObject.
 			for (MapObject object : map.getLayers().get(objektebene)
 					.getObjects()) {
-				if (object instanceof RectangleMapObject) {
-					Rectangle rt = ((RectangleMapObject) object).getRectangle();
-					sr.begin(ShapeType.Line);
-					sr.rect(rt.x, rt.y, rt.width, rt.height);
-					sr.end();
+					if (object instanceof RectangleMapObject) {
+						Rectangle rt = ((RectangleMapObject) object).getRectangle();
+						sr.begin(ShapeType.Line);
+						sr.rect(rt.x, rt.y, rt.width, rt.height);
+						sr.end();
+					}
 				}
 			}
+			
+			//Pfeil wenn Spieler am Zug ist.
+			if(player.getGame().getGamersTurn()==0){
+				MapObject object = map.getLayers().get("GameField").getObjects().get("arrow");
+				Polygon pfeil = ((PolygonMapObject) object).getPolygon();
+				float[] vert = pfeil.getTransformedVertices();
+				sr.begin(ShapeType.Line);
+				sr.polygon(vert);
+				sr.end();
+			}
 		}
-
-		
-		//InputProzessor
+		//Menue
 		if(state.get(1)||state.get(3)){
-//			Gdx.input.setInputProcessor(stage);
+			//Wenn Spiel zu ende ist soll State 1 und Text mit Btton aktiv werden.
+			if(state.get(8)){
+				//Tabelle fï¿½r Neustart vorbereiten.
+				table.clear();
+				table.add(heading).colspan(1);
+				table.row();
+				table.add(buttonRestart).minWidth(buttonwidth).minHeight(buttonheight);
+				table.row();
+				table.add().minHeight(buttonwidth*0.02f);
+				table.row();
+				table.add(new Label("Ende",headingStyle)).colspan(1);
+				table.row();
+				table.add().minHeight(buttonwidth*0.02f);
+				table.row();
+				table.add(new Label("Du hast "+((player.getGame().hasPlayerWon())?"gewonnen!":"leider verloren."),headingStyle)).colspan(1);
+				table.row();
+				table.add().minHeight(buttonwidth*0.02f);
+				table.row();
+				table.add(new Label("Druecke Neustart fuer ein neues Spiel.",headingStyle)).colspan(1);
+				table2.clear();
+				Gdx.input.setInputProcessor(inputMultiplexer);
+				CameraController.changeStateTo(8, false,true);
+			}
 			stage.act(delta);
 			stage.draw();
-		}else{
-//		Gdx.input.setInputProcessor(gestureDetector);
 		}
-
 	}
-
+	
 	@Override
 	public void resize(int width, int height) {
-		// Gdx.app.log(TITLE, "resize(...)");
-		// TODO globale variable oder referenz auf map größe
 		camera.viewportWidth = width;
 		camera.viewportHeight = height;
-		// camera.position.set(width/2f, height/2f, 0);
-		// camera.zoom=0.5f;
 		camera.update();
 	}
 
 	@Override
 	public void hide() {
-		// Gdx.app.log(TITLE, "hide()");
 		// TODO Auto-generated method stub
 		dispose();
 
@@ -519,7 +572,6 @@ public class GameFieldScreen implements Screen {
 
 	@Override
 	public void pause() {
-		// Gdx.app.log(TITLE, "pause()");
 		// TODO Save game fields
 		// try {
 		// Player.savePlayer(player);
@@ -531,20 +583,17 @@ public class GameFieldScreen implements Screen {
 
 	@Override
 	public void resume() {
-		// Gdx.app.log(TITLE, "resume()");
-		// //TODO load game fields
+		//TODO load game fields
 	}
 
 	@Override
 	public void dispose() {
-		// Gdx.app.log(TITLE, "dispose()");
 		// TODO implement save
 		// try {
 		// Player.savePlayer(player);
 		// } catch (IOException e) {
 		// e.printStackTrace();
 		// }
-
 		atlas.dispose();
 		player.dispose();// TODO Rekursiv alle texturen
 		batch.dispose();
@@ -552,8 +601,6 @@ public class GameFieldScreen implements Screen {
 		introTexture.dispose();
 		stage.dispose();
 		skin.dispose();
-		// ship.getTexture().dispose();// Wichtig texturen dispose()
 
 	}
-
 }

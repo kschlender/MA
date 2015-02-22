@@ -5,19 +5,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import com.ma.schiffeversenken.android.view.CreateMultiplayerGame;
-import com.ma.schiffeversenken.android.view.GamePreferencesActivity;
 import com.ma.schiffeversenken.android.view.VisitMultiplayerGame;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Intent;
 
 /**
  * Verwaltet die Bluetooth Verbindung
  * @author Maik Steinborn
  */
 public class Bluetooth extends Activity {
+	/**Konstante, die zurueckgegeben wird, wenn Bluetooth auf diesem Geraet
+	 * nicht unterstuetzt wird*/
 	private static final int BLUETOOTH_NOT_SUPPORTED = 1;
+	/**Konstante, die zurueckgegeben wird, wenn Bluetooth auf diesem Geraet
+	 * deaktiviert ist*/
 	private static final int BLUETOOTH_DISABLED = 2;
 	/**Eine Konstante, die an die Methode startActivityForResult() uebergeben wird,
 	 * wenn das Bluetooth nicht eingeschaltet*/
@@ -29,7 +31,11 @@ public class Bluetooth extends Activity {
 	/**Alle Geraete mit denen eine Verbindung aufgebaut werden kann*/
 	private List<BluetoothDevice> allDevices;
 	/**Eindeutige UUID, die auf Server- und Clientseite beim Aufbau der Bluetooth Verbindung genutzt wird*/
-	private final String appUUID = "00001101-0000-1000-8000-00805f9b34fb";
+	public static final String appUUID = "00001101-0000-1000-8000-00805f9b34fb";
+	/**Statischer String, der fuer die Uebergabe von Eigenschaften über SharedPrefereces dient*/
+	public static final String PRIMARY_BT_GAME = "primaryBTGame";
+	/**Statischer String, der fuer die Uebergabe von Eigenschaften über SharedPrefereces dient*/
+	public static final String SECONDARY_BT_GAME = "secondaryBTGame";
 	
 	
 	/**
@@ -75,10 +81,10 @@ public class Bluetooth extends Activity {
 	/**
 	 * Bluetooth Server Socket in einem Thread starten und auf Verbindung von Client warten
 	 * @param cmgClass Das initialisierte CreateMultiplayerGame Objekt
-	 * @param game Das initialisierte Game Objekt
+	 * @param reconnect true oder false ob dies ein erneuter Verbindungsversuch ist
 	 */
-	public void startServer(CreateMultiplayerGame cmgClass, Game game){
-		BluetoothListenThread btListenThread = new BluetoothListenThread(bluetoothAdapter, cmgClass, game, appUUID);
+	public void startServer(CreateMultiplayerGame cmgClass, boolean reconnect){
+		BluetoothListenThread btListenThread = new BluetoothListenThread(bluetoothAdapter, cmgClass, appUUID, reconnect);
 		btListenThread.start();
 	}
 	
@@ -86,9 +92,9 @@ public class Bluetooth extends Activity {
 	 * Verbindung mit Server aufbauen
 	 * @param mac Die MAC-Adresse des Servers, mit dem die Verbindung aufgebaut werden soll
 	 * @param vmgClass Das initialisierte VisitMultiplayerGame Objekt
-	 * @param game Das initialisierte Game Objekt
+	 * @param reconnect true oder false ob dies ein erneuter Verbindungsversuch ist
 	 */
-	public void connectToServer(String mac, VisitMultiplayerGame vmgClass, Game game){
+	public void connectToServer(String mac, VisitMultiplayerGame vmgClass, boolean reconnect){
 		BluetoothDevice device = null;
 		
 		for(BluetoothDevice dev : allDevices){
@@ -99,7 +105,7 @@ public class Bluetooth extends Activity {
 		}
 		
 		if(device != null){
-			BluetoothConnectThread btConnectThread = new BluetoothConnectThread(device, bluetoothAdapter, vmgClass, game, appUUID);
+			BluetoothConnectThread btConnectThread = new BluetoothConnectThread(device, bluetoothAdapter, vmgClass, appUUID, reconnect);
 			btConnectThread.start();
 		}
 	}

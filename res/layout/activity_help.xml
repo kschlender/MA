@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.ma.schiffeversenken.android.view.Hilfe" >
+    tools:context="com.ma.schiffeversenken.android.view.Help" >
 
     <EditText
         android:id="@+id/editText1"
@@ -16,11 +16,14 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:ems="10"
-        android:inputType="textMultiLine"
+        android:inputType="textMultiLine|none"
         android:scrollbarAlwaysDrawVerticalTrack="false"
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:text="@string/help"
         android:textSize="12sp" >
-
         <requestFocus />
     </EditText>
 

@@ -3,7 +3,6 @@ package com.ma.schiffeversenken.android.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -11,15 +10,14 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.Json.Serializable;
-import com.badlogic.gdx.utils.JsonValue;
-
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.OpenableColumns;
 
+/**
+ * GamePreferences Objekt zur einstellung von Spieleinstellungen
+ * @author Klaus Schlender
+ */
+@Deprecated
 public class GamePreferences implements Parcelable{
 	
 	private static final long serialVersionUID = 1L;
@@ -182,7 +180,7 @@ public class GamePreferences implements Parcelable{
 	 * 
 	 * @param obj
 	 *            Das zu serialisierende Object.
-	 * @return ByteArray der das serialiserte Object hält.
+	 * @return ByteArray der das serialiserte Object haelt.
 	 * @throws IOException
 	 */
 	public static byte[] serialize(Object obj) throws IOException {
@@ -197,7 +195,7 @@ public class GamePreferences implements Parcelable{
 	 * 
 	 * @param bytes
 	 *            ByteArray eines Objectes.
-	 * @return deserialisiertes Objekt wird zurückgeliefert.
+	 * @return deserialisiertes Objekt wird zurueckgeliefert.
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */

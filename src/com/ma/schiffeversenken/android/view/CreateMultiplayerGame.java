@@ -1,8 +1,10 @@
 package com.ma.schiffeversenken.android.view;
 
+
+import com.ma.schiffeversenken.android.AndroidLauncher;
 import com.ma.schiffeversenken.android.R;
 import com.ma.schiffeversenken.android.controller.Bluetooth;
-import com.ma.schiffeversenken.android.controller.Game;
+import com.ma.schiffeversenken.android.controller.BluetoothConnectedThread;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -45,25 +47,47 @@ public class CreateMultiplayerGame extends Activity {
 		else{
 			Intent getVisible = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
 			startActivityForResult(getVisible, 0);
-			progress = new ProgressDialog(this);
-			progress.setMessage(getString(R.string.WaitForTakers));
-			progress.setIndeterminate(true);
-			progress.show();
-			
-			/*
-			 * Field Klasse gibt aktuell noch Fehler
-			Field firstField = new Field(0);
-			Field secondField = new Field(1);*/
-			Game game = new Game(1, null, null, true, false,false);
-			
-			bt.startServer(this, game);
 		}
 	}
 
-	public void startGame(){
-			Intent intent = new Intent(getApplicationContext(), GamePreferencesActivity.class);
+	/**
+	 * Bluetooth Server Socket in einem Thread starten und auf Verbindung von Client warten
+	 * @param reconnect true oder false, ob dies ein erster oder erneuter Verbindungsversuch ist
+	 */
+	public void startServer(boolean reconnect){
+		progress = new ProgressDialog(this);
+		progress.setMessage(getString(R.string.WaitForTakers));
+		progress.setIndeterminate(true);
+		progress.show();
+				
+		bt.startServer(this, reconnect);
+	}
+	
+	/**
+	 * Wird nach dem ACTION_REQUEST_DISCOVERABLE Dialog aufgerufen.
+	 * Wertet die Eingabe des Benutzers aus.
+	 */
+	public void onActivityResult(int RequestCode, int ResultCode, Intent Data) {
+		super.onActivityResult(RequestCode, ResultCode, Data); 
+		if(RequestCode == 0){
+			if(ResultCode == 120){
+				startServer(false);
+			}
+			else{
+				finish();
+			}
+		}
+	} 
+	
+	/**
+	 * Wird aufgerufen, wenn die Bluetooth Verbindung erfolgreich hergestellt wurde.
+	 * Startet das Spiel.
+	 */
+	public void startGame(BluetoothConnectedThread btcThread){
+			Intent intent = new Intent(getApplicationContext(), AndroidLauncher.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-			intent.putExtra("bluetoothGame", "true");
+			intent.putExtra(Bluetooth.PRIMARY_BT_GAME, String.valueOf(true));
+			intent.putExtra(Bluetooth.SECONDARY_BT_GAME, String.valueOf(false));
 			startActivity(intent);
 	}
 	
@@ -87,7 +111,7 @@ public class CreateMultiplayerGame extends Activity {
 	}
 	
 	/**
-	 * Dieser Toast muss ueber den UI Thread ausgeführt werden, da er von außerhalb aufgerufen wird
+	 * Dieser Toast muss ueber den UI Thread ausgefuehrt werden, da er von ausserhalb aufgerufen wird
 	 * @param message Text, der als Toast angezeigt wird
 	 */
 	public void showToast(final String message){

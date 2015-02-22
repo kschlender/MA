@@ -5,12 +5,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.ma.schiffeversenken.GameFieldScreen;
 import com.ma.schiffeversenken.android.controller.Game;
+import com.ma.schiffeversenken.android.controller.KI;
+import com.ma.schiffeversenken.android.view.Settings;
+import com.ma.schiffeversenken.android.view.StartScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -22,41 +28,62 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.Json.Serializable;
-import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.Base64Coder;
+
 
 /**
- * Der Player hält alles zusammen OpenGl/Controller
+ * Der Player traegt die Spielelemente und das Spielgeschehen.
  * 
- * @author Klaus
+ * @author Klaus Schlender
  */
-public class Player implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class Player {
 	private static Game game;
 	private static Field firstField;
 	private static Field secondField;
 	TiledMap map;
+	private int gameMode;
+	private int theKiLevel;
 	private static ArrayList<Integer> gameSettings;
 
 	/**
-	 * TODO
+	 * TODO Make Animation
 	 * @param tileSet
 	 * @param m
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
-	public Player(TiledMapTileSet tileSet, TiledMap m)
+	public Player(TiledMapTileSet tileSet, TiledMap m, boolean primaryBTGame, boolean secondaryBTGame)
 			throws ClassNotFoundException, IOException {
 		super();
+		Preferences pref = Gdx.app.getPreferences("Main_Preferences");
+		Field.soundOff = Boolean.parseBoolean(pref.getString(Settings.SETTINGS_SOUNDOFF));
+		Field.vibrationOff = Boolean.parseBoolean(pref.getString(Settings.SETTINGS_VIBRATIONOFF));
+		Field.cheatsOn = Boolean.parseBoolean(pref.getString(Settings.SETTINGS_CHEATSOFF));
+		if(pref.contains(StartScreen.SETTINGS_BUTTONWIDTH)){
+		GameFieldScreen.buttonwidth = Integer.parseInt(pref.getString(StartScreen.SETTINGS_BUTTONWIDTH));
+		GameFieldScreen.buttonheight = Integer.parseInt(pref.getString(StartScreen.SETTINGS_BUTTONHEIGHT));
+		}
 		map = m;
 		firstField = new Field(0, tileSet, (TiledMapTileLayer) map.getLayers()
 				.get("0"));
 		secondField = new Field(1, tileSet, (TiledMapTileLayer) map.getLayers()
 				.get("0"));
-		// TODO Support moere gameModes...
-		this.game = new Game(0, firstField, secondField, false, false,false);
+		
+		//Load Preferences on Ki Difficulty
+		String kiLevel = pref.getString("ki");
+		Gdx.app.log(GameFieldScreen.TITLE, "Kilevel: "+kiLevel);
+		theKiLevel=-1;
+		if (kiLevel.equals(KI.KI_SIMPLE)){
+			theKiLevel=1;
+		}else if (kiLevel.equals(KI.KI_NORMAL)){
+			theKiLevel=2;
+		}else if (kiLevel.equals(KI.KI_DIFFICULT)){
+			theKiLevel=3;
+		}
+
+		gameMode = 0;
+		if(primaryBTGame || secondaryBTGame) gameMode = 1;
+		this.game = new Game(gameMode, firstField, secondField, primaryBTGame, secondaryBTGame, false, theKiLevel);
 
 		if (Gdx.files.isLocalStorageAvailable()
 				&& Gdx.files.local("preferences.bin").exists()) {
@@ -119,7 +146,7 @@ public class Player implements Serializable {
 	}
 
 	/**
-	 * Callback Methode für das Object Player
+	 * Callback Methode fuer das Object Player
 	 */
 	public void dispose() {
 		// TODO Auto-generated method stub
@@ -147,8 +174,7 @@ public class Player implements Serializable {
 	 * Methode zum Zeichnen der Szene
 	 * 
 	 * @param batch
-	 *            SpriteBatch wird fürs Zeichnen übergeben.
-	 * @param atlas
+	 *            SpriteBatch wird fuers Zeichnen uebergeben.
 	 */
 	// @Deprecated
 	public void draw(Batch batch) {
@@ -157,10 +183,10 @@ public class Player implements Serializable {
 
 	public void animatedTiles() {
 		// Animatad Tiles
-		// FrameArray für zwei verschiedene Bilder
+		// FrameArray fuer zwei verschiedene Bilder
 		Array<StaticTiledMapTile> frameTiles = new Array<StaticTiledMapTile>(3);
 
-		// Iterieren und holen der Animierten tiles für das FrameArray
+		// Iterieren und holen der Animierten tiles fuer das FrameArray
 		Iterator<TiledMapTile> tiles = map.getTileSets().getTileSet("ships")
 				.iterator();
 		while (tiles.hasNext()) {
@@ -181,7 +207,7 @@ public class Player implements Serializable {
 		//
 		//
 
-		// iteration über das TileGrid
+		// iteration ueber das TileGrid
 		for (int x = 0; x < layer.getHeight(); x++) {
 			for (int y = 0; y < layer.getHeight(); y++) {
 				Cell cell = layer.getCell(x, y);
@@ -238,7 +264,7 @@ public class Player implements Serializable {
 			file = Gdx.files.local("player_gameSettings.bin");
 			tmpgameSettings = (ArrayList<Integer>) deserialize(file.readBytes());
 
-			player = new Player(tileSet, m, new Game(0, tmpfirstField, tmpsecondField,false,false,true), tmpfirstField,
+			player = new Player(tileSet, m, new Game(0, tmpfirstField, tmpsecondField, false, false, true, 1), tmpfirstField,
 					tmpsecondField, tmpgameSettings);
 		}
 		return player;
@@ -249,7 +275,7 @@ public class Player implements Serializable {
 	 * 
 	 * @param obj
 	 *            Das zu serialisierende Object.
-	 * @return ByteArray der das serialiserte Object hält.
+	 * @return ByteArray der das serialiserte Object haelt.
 	 * @throws IOException
 	 */
 	public static byte[] serialize(Object obj) throws IOException {
@@ -264,7 +290,7 @@ public class Player implements Serializable {
 	 * 
 	 * @param bytes
 	 *            ByteArray eines Objectes.
-	 * @return deserialisiertes Objekt wird zurückgeliefert.
+	 * @return deserialisiertes Objekt wird zurueckgeliefert.
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
@@ -274,14 +300,63 @@ public class Player implements Serializable {
 		ObjectInputStream o = new ObjectInputStream(b);
 		return o.readObject();
 	}
+	
+	/**
+	 * Liest ein String Objekt ein und schreibt diesen in Base64.
+	 * @param s String dieser haelt ein Objekt
+	 * @return o Objekt wird zurueckgeliefert
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	   public static Object fromString( String s ) throws IOException ,
+	                                                       ClassNotFoundException {
+	        byte [] data = Base64Coder.decode( s );
+	        ObjectInputStream ois = new ObjectInputStream( 
+	                                        new ByteArrayInputStream(  data ) );
+	        Object o  = ois.readObject();
+	        ois.close();
+	        return o;
+	   }
 
-	@Override
-	public void write(Json json) {
-		// TODO Auto-generated method stub
+	   /**
+	    * Liest ein Base64 Objekt und schreibt dieses in einen String.
+	    * @param o Objekt welches in String geschrieben werden soll.
+	    * @return String der resultierende String
+	    */
+	   public static String toString( Serializable o ) {
+		   try {
+	        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        ObjectOutputStream oos;
+				oos = new ObjectOutputStream( baos );
+	        oos.writeObject(o);
+	        oos.close();
+	        return new String( Base64Coder.encode( baos.toByteArray() ) );
+		   } catch (IOException e) {
+			   // TODO Auto-generated catch block
+			   e.printStackTrace();
+		   }
+		   return "";
+	    }
+		
+	public int getGameMode(){
+		return gameMode;
+	}
+	
+	public int getKiLevel(){
+		return theKiLevel;
 	}
 
-	@Override
-	public void read(Json json, JsonValue jsonData) {
-		// TODO Auto-generated method stub
+	public void setNewGame(Game game2) {
+		 try
+	      {
+	       game.sleep( 500 );
+	       game.interrupt();
+	      }
+	      catch ( InterruptedException e )
+	      {
+	       System.out.println( "Unterbrechung in sleep()" );
+	       this.game=game2;
+	      }
+		
 	}
 }

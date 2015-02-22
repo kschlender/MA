@@ -2,6 +2,7 @@ package com.ma.schiffeversenken.android.controller;
 
 import java.util.Random;
 
+import com.ma.schiffeversenken.android.model.Field;
 import com.ma.schiffeversenken.android.model.FieldUnit;
 import com.ma.schiffeversenken.android.model.Ship;
 
@@ -10,8 +11,6 @@ import com.ma.schiffeversenken.android.model.Ship;
  * @author Maik Steinborn
  */
 public class DifficultStrategy implements KIStrategy{
-	/**Anzahl der Feldelemente auf dem Spielfeld - 1*/
-	public static final int FIELD_SIZE_MINUS_ONE = 99;
 	/**Das initialisierte KI Objekt*/
 	KI ki;
 	
@@ -47,7 +46,7 @@ public class DifficultStrategy implements KIStrategy{
 				//Angriff auf eine neue zufaellige FeldID starten
 				do{
 					//Zufaellige Zahl erstellen
-					nextAttackID = random.nextInt(FIELD_SIZE_MINUS_ONE) + 1;
+					nextAttackID = random.nextInt(Field.FIELD_SIZE) + 1;
 				}while(ki.getEnemiesField().getElementByID(nextAttackID).getAttacked());
 			}
 		}
@@ -57,7 +56,7 @@ public class DifficultStrategy implements KIStrategy{
 	
 	/**
 	 * Fuehrt eine sichere Attacke aus,
-	 * das heiﬂt, dass auf jeden Fall ein gegnerisches Schiff getroffen wird
+	 * das heisst, dass auf jeden Fall ein gegnerisches Schiff getroffen wird
 	 * @return Die ID des Feldelements, das angegriffen wird
 	 */
 	private int getIDForSecureAttack(){

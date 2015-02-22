@@ -3,11 +3,13 @@ package com.ma.schiffeversenken.android.view;
 import com.ma.schiffeversenken.android.R;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 /**
  * Android Activity zur Auswahl ob ein Mehrspieler Spiel erstellt
@@ -23,10 +25,8 @@ public class Multiplayer extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_multiplayer);
 		
-		Button CreateGameButton = null;
-		Button VisitGameButton = null;
-        createButtons(CreateGameButton, R.id.Create_Game_Button, "Spiel erstellen", CreateMultiplayerGame.class);
-        createButtons(VisitGameButton, R.id.Visit_Game_Button, "An Spiel teilnehmen", VisitMultiplayerGame.class);
+        createButtons(R.id.Create_Game_Button, "Spiel erstellen", CreateMultiplayerGame.class);
+        createButtons(R.id.Visit_Game_Button, "An Spiel teilnehmen", VisitMultiplayerGame.class);
 	}
 
 	@Override
@@ -48,14 +48,20 @@ public class Multiplayer extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-	private <E> void createButtons(Button button, int id, String text, final Class<E> c) {
+	private <E> void createButtons(int id, String text, final Class<E> c) {
         /*
          * Buttons erstellen
          */
-        Button startSpielButton = (Button) findViewById(id);
-        startSpielButton.setText(text);
-        startSpielButton.setOnClickListener(new View.OnClickListener() {
-
+		Point p = new Point();
+		getWindowManager().getDefaultDisplay().getSize(p);
+		int buttonWidth = p.x / 2;
+		
+        Button button = (Button) findViewById(id);
+        //button.setText(text);
+        RelativeLayout.LayoutParams lParams = (android.widget.RelativeLayout.LayoutParams) button.getLayoutParams();
+		lParams.width = buttonWidth;
+		
+		button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {

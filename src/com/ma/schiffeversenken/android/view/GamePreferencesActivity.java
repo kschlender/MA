@@ -15,19 +15,20 @@ import android.widget.TextView;
 import com.ma.schiffeversenken.android.model.GamePreferences;
 import com.ma.schiffeversenken.android.AndroidLauncher;
 import com.ma.schiffeversenken.android.R;
-
+/**
+ * Android Activity zur einstellung von Spieleinstellungen
+ * @author Klaus Schlender
+ */
+@Deprecated
 public class GamePreferencesActivity extends Activity implements
 		OnClickListener {
 
 	private GamePreferences mGamePreferences;
-	private Bundle savedInstanceState;
 	private boolean bluetoothGame;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.savedInstanceState = savedInstanceState;
-
 		Bundle extras = getIntent().getExtras();
 		if(extras != null){
 			bluetoothGame = Boolean.parseBoolean(extras.get("bluetoothGame").toString());
@@ -226,15 +227,23 @@ public class GamePreferencesActivity extends Activity implements
 				fos.close();
 
 				if (checkMinimumShips()) {
+					
 					Intent intent = new Intent(GamePreferencesActivity.this,
 							AndroidLauncher.class);
-					// intent.putExtra(GamePreferences.GAME_PREFERENCES_TAG,
-					// mGamePreferences);
+					intent.putExtra(GamePreferences.GAME_PREFERENCES_TAG,
+					mGamePreferences);
+					if(this.bluetoothGame){
+						 intent.putExtra("bluetoothGame", "true");
+					
+					}
+					else{
+						intent.putExtra("bluetoothGame", "false");
+					}
 					startActivity(intent);
 
 				} else {
 					((TextView) findViewById(R.id.grid_topic_row_title))
-							.setText("Ein Schiff ausw‰hlen");
+							.setText("Ein Schiff ausw√§hlen");
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

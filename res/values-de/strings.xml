@@ -19,8 +19,67 @@
     <string name="NoPairedDevices">Keine gekoppelten Geräte!</string>
     <string name="BluetoothNotAvailable">Bluetooth auf diesem Gerät nicht verfügbar</string>
     <string name="SearchingForNewDevices">Neue Geräte werden gesucht</string>
-    <string name="NoDevicesFound">Keine Geräte gefunden!</string>
+    <string name="NoDevicesFound">Keine neuen Geräte gefunden!</string>
     <string name="WaitForTakers">Auf Mitspieler warten</string>
     <string name="PleaseSelectADevice">Bitte ein Gerät auswählen</string>
+    <string name="app_name">Schiffeversenken</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_spiel_starten">SpielStarten</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="help">Ziel des Spiels:\nDas Ziel des Spiels ist es, alle Schiffe der gegnerischen Spieler zu versenken.\nDer Spieler, der zuletzt noch nichtversenkte Schiffe hat, gewinnt.\n
+\nRegeln des Standardspiels:
+\nEs gibt zwei Spieler.\nDie Spielfläche beträgt 10x10 Felder.\nZu Beginn des Spiels platziert jeder Spieler seine Schiffe.\nJeder Spieler verfügt über maximal zehn Schiffe. 
+\nDie Schiffe dürfen waagerecht oder senkrecht aufgebaut werden.
+\nDer Angreifende gibt das Feld an, dass er angreift.\nEin Schiff gilt als versenkt, wenn alle Felder des Schiffes getroffen wurden.
+\nEin Spieler darf solange angreifen, bis er ins Wasser trifft.\nAnschließend ist der Gegenspieler am Zug.</string>
+    <string name="title_activity_settings">Einstellungen</string>
+    <string name="title_activity_help">Hilfe</string>
+    <string name="title_activity_gamemode">Spielermodus</string>
+    <string name="title_activity_multiplayer">Multiplayer</string>
+    <string name="title_activity_create_multiplayer_game">CreateMultiplayerGame</string>
+    <string name="title_activity_visit_multiplayer_game">VisitMultiplayerGame</string>
+    <string name="title_activity_schlachtfeld">schlachtfeld</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="hello">Hello, OpenGL ES 2.0!</string>
+    <string name="title_activity_spiel_einstellungen">SpielEinstellungen</string>
+    <string name="single_player_game">Einzelspieler</string>
+    <string name="multi_player_game">Mehrspieler</string>
+    <string name="zerstoerer_row_title">Zerstörer(0 bis 2)</string>
+    <string name="schlachtschiff_row_title">Schlachtschiff(0 bis 1)</string>
+    <string name="uboot_row_title">Uboot(0 bis 3)</string>
+    <string name="kreuzer_boat_row_title">Kreuzer(0 bis 4)</string>
+    <string name="grid_topic_row_title">Wähle eine Spielstrategie</string>
+    <string name="grid_topic_row_title2">Drücken Sie Start\num zu Beginnen</string>
+    <string name="schwierigkeitsstufe">KI-Stärke(1 bis 3)</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="zurueck">Zurück</string>
+    <string name="start">Start</string>
+    <string name="title_activity_ship_configuration">ShipConfigurationActivity</string>
+    <string name="connection_error">Keine Verbindung möglich</string>
+    <string name="button_ki_einfach">Einfach</string>
+    <string name="button_ki_normal">Normal</string>
+    <string name="button_ki_schwer">Schwer</string>
+    <string name="ki_simple">Einfach</string>
+    <string name="ki_normal">Mittel</string>
+    <string name="ki_difficult">Schwer</string>
+    <string name="successfully_connected_with">Erfolgreich verbunden mit </string>
+    <string name="bluetooth_reconnect_question">Die Verbindung wurde unterbrochen, möchten Sie versuchen die Verbindung wiederherzustellen?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="button_text_create_game">Spiel erstellen</string>
+    <string name="button_text_visit_game">An Spiel teilnehmen</string>
+    <string name="button_text_mute">Lautlos</string>
+    <string name="button_text_vibration_off">Vibration aus</string>
+    <string name="button_text_start_game">Spiel starten</string>
+    <string name="button_text_settings">Einstellungen</string>
+    <string name="button_text_help">Hilfe</string>
+    <string name="title_activity_back">BackActivity</string>
+    <string name="button_text_back">Zurück</string>
+    <string name="settings_soundOff">soundOff</string>
+    <string name="settings_vibrationOff">vibrationOff</string>
+    <string name="button_text_exit">Beenden</string>
+      <string name="button_text_cheats_checkbox">Cheats an</string>
     
 </resources>

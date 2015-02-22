@@ -9,36 +9,14 @@ import com.ma.schiffeversenken.android.model.*;
  * Steuert das automatische Platzieren der Schiffe fuer beide Spiele
  * 
  * @author Maik Steinborn
+ * @author Klaus Schlender
  */
 public class ShipPlacement {
-	/** Rechte Kante */
-	public static final int EDGE_RIGHT = 0;
-	/** Obere Kante */
-	public static final int EDGE_ABOVE = 1;
-	/** Linke Kante */
-	public static final int EDGE_LEFT = 2;
-	/** Untere Kante */
-	public static final int EDGE_BELOW = 3;
-	/** Vorderes Schiff Segment */
-	public static final int SHIP_SEGMENT_FRONT = 0;
-	/** Mittleres Schiff Segment */
-	public static final int SHIP_SEGMENT_MIDDLE = 1;
-	/** Hinteres Schiff Segment */
-	public static final int SHIP_SEGMENT_BACK = 2;
-	/** Anzahl der Feldelement - 1 */
-	public static final int FIELD_SIZE_MINUS_ONE = 99;
-	/** Ausrichtung des Schiffs nach rechts */
-	public static final int SHIP_ORIENTATION_RIGHT = 0;
-	/** Ausrichtung des Schiffs nach oben */
-	public static final int SHIP_ORIENTATION_ABOVE = 1;
-	/** Ausrichtung des Schiffs nach links */
-	public static final int SHIP_ORIENTATION_LEFT = 2;
-	/** Ausrichtung des Schiffs nach unten */
-	public static final int SHIP_ORIENTATION_BELOW = 3;
-	/** Anzahl der moeglichen Ausrichtungen eines Schiffs */
-	public static final int NUMBER_OF_ORIENTATIOS_MINUS_ONE = 3;
 	/** Anzahl der Bloecke */
 	public static final int NUMBER_OF_BLOCKS = 25;
+	/**Wird bei einem JUnit Test auf True gesetzt*/
+	public static boolean jUnitTest = false;
+	
 	/**
 	 * Das Spielfeld wird in 25 Bloecke aufgeteilt. Die Bloecke werden in dieser
 	 * Variable gespeichert
@@ -61,7 +39,7 @@ public class ShipPlacement {
 	 * @param field
 	 * @param ships
 	 */
-	public void placeShips(Field field, Ship[] ships, boolean test) {
+	public void placeShips(Field field, Ship[] ships) {
 		this.t = field;
 
 		createBlocks(field);
@@ -77,13 +55,13 @@ public class ShipPlacement {
 				do {
 					// Pruefen ob der Block schon belegt ist.
 					// Zufaellige Zahl erstellen
-					randomID = random.nextInt(FIELD_SIZE_MINUS_ONE) + 1;
+					randomID = random.nextInt(Field.FIELD_SIZE) + 1;
 				} while (!checkBlock(randomID, ship));
 
 				do {
 					// Pruefen ob das FeldElement schon belegt ist
 					orientation = random
-							.nextInt(NUMBER_OF_ORIENTATIOS_MINUS_ONE);
+							.nextInt(Ship.NUMBER_OF_ORIENTATIOS);
 					run++;
 					ok = checkEinheit(orientation, ship, randomID, field);
 				} while (!ok && run < 4);
@@ -95,101 +73,104 @@ public class ShipPlacement {
 			FieldUnit tempElement = field.getElementByID(randomID);
 			tempElement.setOccupied(true);
 			// TODO: X\Y Koordinate an Schiff uebergeben, wenn belegt
-			tempElement.placeShip(ship, SHIP_SEGMENT_BACK);
+			tempElement.placeShip(ship, Ship.SHIP_SEGMENT_BACK);
 			ship.setStandort(tempElement, 0, orientation);
 			int schiffSize = ship.getSize();
 
 			if (schiffSize > 1) {
-				if (orientation == SHIP_ORIENTATION_RIGHT) {
+				if (orientation == Ship.SHIP_ORIENTATION_RIGHT) {
 					markElements(1, schiffSize, randomID, field, ship,
 							orientation);
-				} else if (orientation == SHIP_ORIENTATION_ABOVE) {
+				} else if (orientation == Ship.SHIP_ORIENTATION_ABOVE) {
 					markElements(-10, schiffSize, randomID, field, ship,
 							orientation);
-				} else if (orientation == SHIP_ORIENTATION_LEFT) {
+				} else if (orientation == Ship.SHIP_ORIENTATION_LEFT) {
 					markElements(-1, schiffSize, randomID, field, ship,
 							orientation);
-				} else if (orientation == SHIP_ORIENTATION_BELOW) {
+				} else if (orientation == Ship.SHIP_ORIENTATION_BELOW) {
 					markElements(10, schiffSize, randomID, field, ship,
 							orientation);
 				}
 			}
 		}
 
-		if (!test) {
+		if(!jUnitTest){
 			// Setzen von ships
 			field.setShips(ships);
 		}
 	}
 
 	/**
-	 * Platziert die Schiffe die übergeben werden auf dem Spielfeld Erst das
+	 * Platziert die Schiffe die uebergeben werden auf dem Spielfeld Erst das
 	 * Erstellen von ships, danach das Platzieren in field
 	 * 
-	 * @param field
-	 * @param ships
-	 * @param placedShipUnits
+	 * @param field Feld auf dem Platziert werden soll
+	 * @param placedShipUnits Schiffe, die platziert werden sollen
 	 */
 	public void placeShipsManual(Field field,
 			ArrayList<FieldUnit[]> placedShipUnits) {
-		createBlocks(field);
+//		createBlocks(field);
 		// Erstellen der Schiffe
 		Ship[] ships = new Ship[placedShipUnits.size()];
 
 		for (int i=0;i<placedShipUnits.size();i++) {
 			FieldUnit[] u=placedShipUnits.get(i);
 			
+			//Initialisierung der Schiffe
 			switch (u.length - 1) {
 			case 0:
-				ships[i]= new Ship("Kreuzer", KI.CRUISER_SIZE,u);
+				ships[i]= new Ship(Ship.CRUISER_SIZE,u);
 				for(FieldUnit unit:u){
-					unit.setOccupied(true);
+					unit.setOccupied(true); 
+					unit.placeShip(ships[i], Ship.SHIP_SEGMENT_BACK);
 				}
 				break;
 			case 1:
-				ships[i] = new Ship("Uboot", KI.SUBMARINE_SIZE,u);
+				ships[i] = new Ship(Ship.SUBMARINE_SIZE,u);
 				for(FieldUnit unit:u){
 					unit.setOccupied(true);
+					unit.placeShip(ships[i], Ship.SHIP_SEGMENT_BACK);
 				}
 				break;
 			case 2:
-				ships[i] = new Ship("Zerstoerer", KI.DESTROYER_SIZE,u);
+				ships[i] = new Ship(Ship.DESTROYER_SIZE,u);
 				for(FieldUnit unit:u){
 					unit.setOccupied(true);
+					unit.placeShip(ships[i], Ship.SHIP_SEGMENT_BACK);
 				}
 				break;
 			case 3:
-				ships[i] = new Ship("Schlachtschiff", KI.BATTLESHIP_SIZE,u);
+				ships[i] = new Ship(Ship.BATTLESHIP_SIZE,u);
 				for(FieldUnit unit:u){
 					unit.setOccupied(true);
+					unit.placeShip(ships[i], Ship.SHIP_SEGMENT_BACK);
 				}
 				break;
-
 			default:
 				break;
 			}
 			
-			u[0].placeShip(ships[i], SHIP_SEGMENT_BACK);
+			//Fals ein Kreuzer mit einem Feld
+			u[0].setOccupied(true);
+			u[0].placeShip(ships[i], Ship.SHIP_SEGMENT_BACK);
 			ships[i].setStandortManual(u,u[0].getShipOrientation());
 			int schiffSize = u.length;
 			
-			//TODO Prüfen ob es so passt mit Maik absprechen wie es geplant wurde
-			//Rausgenommen markElements unnötig wegen Manuellem Platzieren.
-//			if (schiffSize > 1) {
-//				if (ships[i].getOrientation() == SHIP_ORIENTATION_RIGHT) {
-//					markElements(1, schiffSize, u[0].getID(), field, ships[i],
-//							ships[i].getOrientation());
-//				} else if (ships[i].getOrientation() == SHIP_ORIENTATION_ABOVE) {
-//					markElements(-10, schiffSize, u[0].getID(), field, ships[i],
-//							ships[i].getOrientation());
-//				} else if (ships[i].getOrientation() == SHIP_ORIENTATION_LEFT) {
-//					markElements(-1, schiffSize, u[0].getID(), field, ships[i],
-//							ships[i].getOrientation());
-//				} else if (ships[i].getOrientation() == SHIP_ORIENTATION_BELOW) {
-//					markElements(10, schiffSize, u[0].getID(), field, ships[i],
-//							ships[i].getOrientation());
-//				}
-//			}
+			if (schiffSize > 1) {
+				if (ships[i].getOrientation() == Ship.SHIP_ORIENTATION_RIGHT) {
+					markElements(1, schiffSize, u[0].getID(), field, ships[i],
+							ships[i].getOrientation());
+				} else if (ships[i].getOrientation() == Ship.SHIP_ORIENTATION_ABOVE) {
+					markElements(10, schiffSize, u[0].getID(), field, ships[i],
+							ships[i].getOrientation());
+				} else if (ships[i].getOrientation() == Ship.SHIP_ORIENTATION_LEFT) {
+					markElements(-1, schiffSize, u[0].getID(), field, ships[i],
+							ships[i].getOrientation());
+				} else if (ships[i].getOrientation() == Ship.SHIP_ORIENTATION_BELOW) {
+					markElements(-10, schiffSize, u[0].getID(), field, ships[i],
+							ships[i].getOrientation());
+				}
+			}
 			
 			
 		}
@@ -206,7 +187,7 @@ public class ShipPlacement {
 	 *            Gibt an in welche Richtung das Schiff platziert wurde (oben,
 	 *            unten, rechts, links)
 	 * @param size
-	 *            Größe des Schiffs
+	 *            Groesse des Schiffs
 	 * @param id
 	 *            ID des Startfeldes
 	 * @param field
@@ -220,7 +201,7 @@ public class ShipPlacement {
 	private void markElements(int counter, int size, int id, Field field,
 			Ship ship, int orientation) {
 		int temp = 0;
-		int shipSegment = SHIP_SEGMENT_MIDDLE;
+		int shipSegment = Ship.SHIP_SEGMENT_MIDDLE;
 		int finalCounter = 0;
 		for (int i = 1; i < size; i++) {
 			finalCounter = counter * i;
@@ -228,7 +209,7 @@ public class ShipPlacement {
 			if (temp > 0 && temp < 101) {
 				FieldUnit tempElement = field.getElementByID(temp);
 				if (i == (size - 1))
-					shipSegment = SHIP_SEGMENT_FRONT;
+					shipSegment = Ship.SHIP_SEGMENT_FRONT;
 				tempElement.setOccupied(true);
 				tempElement.placeShip(ship, shipSegment);
 				ship.setStandort(tempElement, i, orientation);
@@ -236,91 +217,40 @@ public class ShipPlacement {
 		}
 	}
 
-	public String print() {
-		// Spielfeld mit platziertes Schiffen wird ausgegeben
-		// Dient nur zum testen
-		String ret = "#############\r\n";
-		for (int i = 0; i < 10; i++) {
-			ret += "#";
-			for (int j = 0; j < 10; j++) {
-				FieldUnit temp = t.getFieldUnits()[i][j];
-				if (temp.getOccupied()) {
-					try {
-						if (temp.getPlacedShip().getName() == "Uboot")
-							ret += "U";
-						if (temp.getPlacedShip().getName() == "Schlachtschiff")
-							ret += "S";
-						if (temp.getPlacedShip().getName() == "Kreuzer")
-							ret += "K";
-						if (temp.getPlacedShip().getName() == "Zerstoerer")
-							ret += "Z";
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				} else {
-					ret += "O";
-				}
-			}
-			ret += "#\r\n";
-		}
-		ret += "#############\r\n";
-
-		ret += "#############\r\n";
-		for (int i = 0; i < 10; i++) {
-			ret += "#";
-			for (int j = 0; j < 10; j++) {
-				FieldUnit temp = t.getFieldUnits()[i][j];
-				if (temp.getOccupied()) {
-					try {
-						if (temp.getPlacedShip() != null)
-							ret += "X";
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				} else {
-					ret += "O";
-				}
-			}
-			ret += "#\r\n";
-		}
-		ret += "#############\r\n";
-
-		return ret;
-	}
-
 	/**
-	 * Prüft ob die benötigten Felder frei oder belegt sind
+	 * Prueft ob die benoetigten Felder frei oder belegt sind
 	 * 
-	 * @param horver
+	 * @param orientation
 	 *            Gibt an in welcher Richtung das Schiff platziert werden soll
 	 *            (oben, unten, rechts, links)
 	 * @param ship
 	 *            Das zu platzierende Schiff
 	 * @param id
 	 *            Die ID des Startfeldes
-	 * @param feld
+	 * @param field
 	 *            Spielfeld
 	 * @return Gibt zurueck ob die Felder frei oder belegt sind
 	 */
-	private boolean checkEinheit(int orientation, Ship ship, int id, Field feld) {
+	private boolean checkEinheit(int orientation, Ship ship, int id, Field field) {
 		int size = ship.getSize();
 		boolean ret = true;
-
-		if (feld.getElementByID(id).getOccupied()) {
+		FieldUnit fu = field.getElementByID(id);
+		
+		if (fu.getOccupied()) {
 			ret = false;
 		} else {
-			if (orientation == SHIP_ORIENTATION_RIGHT) {
+			if (orientation == Ship.SHIP_ORIENTATION_RIGHT) {
 				// Nach rechts gerichtetes Schiff
-				ret = checkID(1, size, id, feld);
-			} else if (orientation == SHIP_ORIENTATION_ABOVE) {
+				ret = checkID(1, size, id, field);
+			} else if (orientation == Ship.SHIP_ORIENTATION_ABOVE) {
 				// Nach oben gerichtetes Schiff
-				ret = checkID(-10, size, id, feld);
-			} else if (orientation == SHIP_ORIENTATION_LEFT) {
+				ret = checkID(-10, size, id, field);
+			} else if (orientation == Ship.SHIP_ORIENTATION_LEFT) {
 				// Nach links gerichtetes Schiff
-				ret = checkID(-1, size, id, feld);
-			} else if (orientation == SHIP_ORIENTATION_BELOW) {
+				ret = checkID(-1, size, id, field);
+			} else if (orientation == Ship.SHIP_ORIENTATION_BELOW) {
 				// Nach unten gerichtetes Schiff
-				ret = checkID(10, size, id, feld);
+				ret = checkID(10, size, id, field);
 			}
 		}
 
@@ -328,7 +258,7 @@ public class ShipPlacement {
 	}
 
 	/**
-	 * Prüft eine Reihe von Feldern ob diese frei oder belegt sind
+	 * Prï¿½ft eine Reihe von Feldern ob diese frei oder belegt sind
 	 * 
 	 * @param counter
 	 *            Die ID wird mit dem counter multipliziert, um nach oben,
@@ -337,11 +267,11 @@ public class ShipPlacement {
 	 *            Groesse des Schiffs
 	 * @param id
 	 *            ID des Startfeldes
-	 * @param feld
+	 * @param field
 	 *            Spielfeld
 	 * @return Gibt zurueck ob die Felder frei oder belegt sind
 	 */
-	private boolean checkID(int counter, int size, int id, Field feld) {
+	private boolean checkID(int counter, int size, int id, Field field) {
 		boolean ret = true;
 		int temp = 0;
 		int finalCounter = 0;
@@ -349,7 +279,7 @@ public class ShipPlacement {
 			finalCounter = counter * i;
 			temp = id + finalCounter;
 			if (temp > 0 && temp < 101) {
-				FieldUnit tempElement = feld.getElementByID(temp);
+				FieldUnit tempElement = field.getElementByID(temp);
 				if (tempElement.getOccupied())
 					ret = false;
 				else if ((size - i) > 0) {
@@ -383,13 +313,13 @@ public class ShipPlacement {
 		}
 
 		if (counter == 1)
-			kRichtung = EDGE_RIGHT;
+			kRichtung = FieldUnit.EDGE_RIGHT;
 		else if (counter == -1)
-			kRichtung = EDGE_LEFT;
+			kRichtung = FieldUnit.EDGE_LEFT;
 		else if (counter == 10)
-			kRichtung = EDGE_BELOW;
+			kRichtung = FieldUnit.EDGE_BELOW;
 		else if (counter == -10)
-			kRichtung = EDGE_ABOVE;
+			kRichtung = FieldUnit.EDGE_ABOVE;
 
 		if (element.getEdge(1) == kRichtung || element.getEdge(2) == kRichtung)
 			ret = true;

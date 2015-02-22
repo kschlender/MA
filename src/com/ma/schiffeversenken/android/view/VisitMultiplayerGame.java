@@ -2,6 +2,7 @@ package com.ma.schiffeversenken.android.view;
 
 import java.util.Set;
 
+import com.ma.schiffeversenken.android.AndroidLauncher;
 import com.ma.schiffeversenken.android.R;
 import com.ma.schiffeversenken.android.controller.Bluetooth;
 import com.ma.schiffeversenken.android.controller.Game;
@@ -42,6 +43,7 @@ public class VisitMultiplayerGame extends Activity {
 	/**Wird aufgerufen, wenn ein neues Bluetooth Geraet gefunden wurde oder
 	 * die Suche beendet wurde*/
 	private BroadcastReceiver mReceiver;
+	private String serverAddress;
 	
 	/**
 	 * Wird aufgerufen, wenn ein Geraet ausgewaehlt wurde
@@ -54,37 +56,53 @@ public class VisitMultiplayerGame extends Activity {
 			
 			// Die MAC-Adresse des Geraets herausfiltern
 			final String info = ((TextView) pView).getText().toString();
-			final String address = info.substring(info.length() - 17);
-
-			/*
-			 *Field Klasse gibt aktuell noch Fehler 
-			 *
-			Field enemiesField = new Field(0);
-			Field myField = new Field(1);*/
+			serverAddress = info.substring(info.length() - 17);
 			
-			Game game = new Game(1, null, null, false, true,false);
-			
-			bt.connectToServer(address, VisitMultiplayerGame.this, game);
+			connectToServer(false);
 		}
 	};
 	
+	/**
+	 * Mit Server verbinden
+	 * @param reconnect Gibt an, ob es sich um einen Reconnect handelt
+	 */
+	public void connectToServer(boolean reconnect){
+		bt.connectToServer(serverAddress, VisitMultiplayerGame.this, reconnect);
+	}
+	
+	/**
+	 * Wird aufgerufen, wenn die Bluetooth Verbindung erfolgreich hergestellt wurde.
+	 * Startet das Spiel.
+	 */
 	public void startGame(){
-		Intent intent = new Intent(getApplicationContext(), GamePreferencesActivity.class);
+		Intent intent = new Intent(getApplicationContext(), AndroidLauncher.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-		intent.putExtra("bluetoothGame", "true");
+		intent.putExtra(Bluetooth.PRIMARY_BT_GAME, String.valueOf(false));
+		intent.putExtra(Bluetooth.SECONDARY_BT_GAME, String.valueOf(true));
 		startActivity(intent);
 	}
 	
 	/**
-	 * Erstellt eine VisitMultiplayerGame Activity
+	 * Wird nach dem REQUEST_ENABLE_BT Dialog aufgerufen.
+	 * Wertet die Eingabe des Benutzers aus.
 	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_visit_multiplayer_game);
-		bt = new Bluetooth();
-		status = (TextView) findViewById(R.id.visit_game_status);
-		
+	public void onActivityResult(int RequestCode, int ResultCode, Intent Data) {
+		super.onActivityResult(RequestCode, ResultCode, Data); 
+		if(RequestCode == Bluetooth.REQUEST_ENABLE_BT){
+			if(ResultCode == -1){
+				createAct();
+			}
+			else{
+				finish();
+			}
+		}
+	} 
+	
+	/**
+	 * Baut die Activity weiter auf, wenn der Benutzer den REQUEST_ENABLE_BT
+	 * Dialog positiv bestaetigt hat
+	 */
+	private void createAct(){
 		try{
 			this.mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 			this.mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
@@ -113,10 +131,7 @@ public class VisitMultiplayerGame extends Activity {
 						if (VisitMultiplayerGame.this.mNewDevicesArrayAdapter.getCount() == 0) {
 							VisitMultiplayerGame.this.mNewDevicesArrayAdapter.add(getString(R.string.NoDevicesFound));
 						}
-						else{
-							status.setText(getString(R.string.PleaseSelectADevice));
-						}
-						
+						status.setText(getString(R.string.PleaseSelectADevice));
 						progress.dismiss();
 					}
 			    }
@@ -140,10 +155,31 @@ public class VisitMultiplayerGame extends Activity {
 			} else {
 				this.mPairedDevicesArrayAdapter.add(getString(R.string.NoPairedDevices));
 			}
-			}
-			catch(Exception ex){
-				ex.printStackTrace();
-			}
+		}
+		catch(Exception ex){
+			ex.printStackTrace();
+		}
+		
+		
+		
+		bt.getPairedDevices();
+		bt.discoverDevices();
+		
+		progress = new ProgressDialog(this);
+		progress.setMessage(getString(R.string.SearchingForNewDevices));
+		progress.setIndeterminate(true);
+		progress.show();
+	}
+	
+	/**
+	 * Erstellt eine VisitMultiplayerGame Activity
+	 */
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_visit_multiplayer_game);
+		bt = new Bluetooth();
+		status = (TextView) findViewById(R.id.visit_game_status);
 		
 		int btState = bt.blutoothOK();
 		
@@ -161,14 +197,8 @@ public class VisitMultiplayerGame extends Activity {
 			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 		    startActivityForResult(enableBtIntent, Bluetooth.REQUEST_ENABLE_BT);
 		}
-		else if(btState == 0){
-			bt.getPairedDevices();
-			bt.discoverDevices();
-			
-			progress = new ProgressDialog(this);
-			progress.setMessage(getString(R.string.SearchingForNewDevices));
-			progress.setIndeterminate(true);
-			progress.show();
+		else{
+			createAct();
 		}
 	}
 	
@@ -180,7 +210,7 @@ public class VisitMultiplayerGame extends Activity {
 	}
 	
 	/**
-	 * Dieser Toast muss ueber den UI Thread ausgeführt werden, da er von außerhalb aufgerufen wird
+	 * Dieser Toast muss ueber den UI Thread ausgefuehrt werden, da er von ausserhalb aufgerufen wird
 	 * @param message Text, der als Toast angezeigt wird
 	 */
 	public void showToast(final String message){
@@ -211,6 +241,7 @@ public class VisitMultiplayerGame extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unregisterReceiver(mReceiver);
+		
+		if(mReceiver != null) unregisterReceiver(mReceiver);
 	}
 }

@@ -5,7 +5,9 @@ package com.ma.schiffeversenken.android.model;
  * @author Maik Steinborn
  */
 public class Block {
+	/**Feldelemente, die zu dem Block gehoeren*/
 	int fieldUnits[];
+	/**true oder false ob der Block bereits belegt ist*/
 	boolean occupied;
 	
 	/**

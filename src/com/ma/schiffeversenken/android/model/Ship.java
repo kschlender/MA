@@ -1,17 +1,41 @@
 package com.ma.schiffeversenken.android.model;
 
+
 /**
  * Fuer alle Schiffe
  * 
- * @author Maik, Klaus
+ * @author Maik Steinborn
+ * @author Klaus Schlender
  */
-public class Ship{
+public class Ship {
+	/** Vorderes Schiff Segment */
+	public static final int SHIP_SEGMENT_FRONT = 0;
+	/** Mittleres Schiff Segment */
+	public static final int SHIP_SEGMENT_MIDDLE = 1;
+	/** Hinteres Schiff Segment */
+	public static final int SHIP_SEGMENT_BACK = 2;
+	/**Anzahl der moeglichen Ausrichtungen eines Schiffs*/
+	public static final int NUMBER_OF_ORIENTATIOS = 4;
+	/**Ausrichtung des Schiffs nach rechts*/
+	public static final int SHIP_ORIENTATION_RIGHT = 0;
+	/**Ausrichtung des Schiffs nach oben*/
+	public static final int SHIP_ORIENTATION_ABOVE = 1;
+	/**Ausrichtung des Schiffs nach links*/
+	public static final int SHIP_ORIENTATION_LEFT = 2;
+	/**Ausrichtung des Schiffs nach unten*/
+	public static final int SHIP_ORIENTATION_BELOW = 3;
+	/**Groesse des Kreuzer*/
+	public static final int CRUISER_SIZE = 1;
+	/**Groesse des Uboot*/
+	public static final int SUBMARINE_SIZE = 2;
+	/**Groesse des Zerstoerer*/
+	public static final int DESTROYER_SIZE = 3;
+	/**Groesse des Schlachtschiff*/
+	public static final int BATTLESHIP_SIZE = 4;
 	/** Laenge des Schiffs */
 	int size;
 	/** Boolean ob das Schiff zerstoert ist */
-	boolean destroyed;
-	/** Name des Schiffs */
-	String name;
+	boolean destroyed=false;
 	/** Felder auf denen das Schiff platziert ist */
 	FieldUnit[] location;
 	/** Ausrichtung des Schiffs: 0=rechts, 1=oben, 2=links, 3=unten */
@@ -21,13 +45,10 @@ public class Ship{
 	/**
 	 * Erstellt ein Ship Objekt
 	 * 
-	 * @param name
-	 *            Name des Schiffs
 	 * @param size
 	 *            Groesse des Schiffs
 	 */
-	public Ship(String name, int size) {
-		this.name = name;
+	public Ship(int size) {
 		this.size = size;
 		this.destroyed = false;
 		this.location = new FieldUnit[size];
@@ -37,19 +58,20 @@ public class Ship{
 	/**
 	 * Erstellt ein Ship Objekt mit Location
 	 * 
-	 * @param name
-	 *            Name des Schiffs
 	 * @param size
 	 *            Groesse des Schiffs
 	 * @param location
 	 *            Gebiet der Schiffsteile
 	 */
-	public Ship(String name, int size, FieldUnit[] location) {
-		this.name = name;
+	public Ship(int size, FieldUnit[] location) {
 		this.size = size;
 		this.destroyed = false;
 		this.location = location;
 
+	}
+	
+	public void setOrientation(int orientation){
+		this.orientation = orientation;
 	}
 	
 	/**
@@ -90,14 +112,14 @@ public class Ship{
 		return size;
 	}
 
-	/**
-	 * Gibt den Namen des Schiffs zurueck
-	 * 
-	 * @return Der Name des Schiffs
-	 */
-	public String getName() {
-		return name;
-	}
+//	/**
+//	 * Gibt den Namen des Schiffs zurueck
+//	 * 
+//	 * @return Der Name des Schiffs
+//	 */
+//	public String getName() {
+//		return name;
+//	}
 
 	/**
 	 * Setzt den Standort des Schiffs
@@ -137,6 +159,8 @@ public class Ship{
 	public FieldUnit[] getLocation() {
 		return this.location;
 	}
+
+
 
 
 
